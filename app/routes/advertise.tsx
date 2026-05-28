@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import { useState } from "react";
+import { useTranslation } from "~/context/I18nContext";
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -95,6 +96,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function Advertise({ loaderData }: Route.ComponentProps) {
+  const { t } = useTranslation();
   const { slots } = loaderData;
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
@@ -145,10 +147,10 @@ export default function Advertise({ loaderData }: Route.ComponentProps) {
       <Card className="w-full max-w-2xl bg-night-card border-night-border text-night-text">
         <CardHeader>
           <CardTitle className="text-3xl font-serif text-night-accent text-center">
-            Advertise With Us
+            {t("advertise.title")}
           </CardTitle>
           <CardDescription className="text-night-muted text-center text-lg mt-2">
-            Reach thousands of video fans globally by placing your ads directly on our platform.
+            {t("advertise.subtitle")}
           </CardDescription>
         </CardHeader>
         
@@ -157,10 +159,10 @@ export default function Advertise({ loaderData }: Route.ComponentProps) {
             <Form method="post" onSubmit={handlePay} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Advertiser / Company Name</label>
+                  <label className="text-sm font-medium">{t("advertise.advertiserName")}</label>
                   <Input
                     name="advertiserName"
-                    placeholder="Video Merch Inc."
+                    placeholder={t("advertise.advertiserNamePlaceholder")}
                     className="bg-night-bg border-night-border focus:ring-night-accent"
                     required
                   />
@@ -170,7 +172,7 @@ export default function Advertise({ loaderData }: Route.ComponentProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Banner Image URL</label>
+                  <label className="text-sm font-medium">{t("advertise.bannerUrl")}</label>
                   <Input
                     name="bannerUrl"
                     type="url"
@@ -185,7 +187,7 @@ export default function Advertise({ loaderData }: Route.ComponentProps) {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">Target URL (Link destination)</label>
+                <label className="text-sm font-medium">{t("advertise.targetUrl")}</label>
                 <Input
                   name="targetUrl"
                   type="url"
@@ -200,15 +202,15 @@ export default function Advertise({ loaderData }: Route.ComponentProps) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Ad Slot Position</label>
+                  <label className="text-sm font-medium">{t("advertise.slotPosition")}</label>
                   <Select name="slotId" value={slotId} onValueChange={setSlotId} required>
                     <SelectTrigger className="bg-night-bg border-night-border">
-                      <SelectValue placeholder="Select a slot" />
+                      <SelectValue placeholder={t("advertise.selectSlot")} />
                     </SelectTrigger>
                     <SelectContent withPortal={false} className="bg-night-card border-night-border">
                       {slots.map((s) => (
                         <SelectItem key={s.id} value={s.id} className="focus:bg-night-hover">
-                          {s.name} (${s.price}/day)
+                          {s.name} (${s.price}/{t("advertise.day")})
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -219,7 +221,7 @@ export default function Advertise({ loaderData }: Route.ComponentProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Duration (Days)</label>
+                  <label className="text-sm font-medium">{t("advertise.duration")}</label>
                   <Input
                     name="durationDays"
                     type="number"
@@ -237,9 +239,9 @@ export default function Advertise({ loaderData }: Route.ComponentProps) {
               </div>
 
               <div className="pt-4 border-t border-night-border">
-                <h3 className="font-medium text-lg mb-4">Total Amount: ${totalPrice.toFixed(2)}</h3>
+                <h3 className="font-medium text-lg mb-4">{t("advertise.totalAmount")} ${totalPrice.toFixed(2)}</h3>
                 
-                <p className="text-sm font-medium mb-2">Select Payment Method</p>
+                <p className="text-sm font-medium mb-2">{t("advertise.selectPayment")}</p>
                 <div className="grid grid-cols-3 gap-4 mb-4">
                   {["SOL", "BNB", "USDT"].map((method) => (
                     <div key={method} className="flex items-center">
@@ -269,7 +271,7 @@ export default function Advertise({ loaderData }: Route.ComponentProps) {
                   className="w-full bg-night-accent hover:bg-night-accent-light text-white transition-all shadow-[0_0_15px_rgba(124,58,237,0.3)] hover:shadow-[0_0_25px_rgba(124,58,237,0.5)]"
                   disabled={!slotId || duration <= 0}
                 >
-                  Proceed to Payment
+                  {t("advertise.proceed")}
                 </Button>
               </div>
             </Form>
@@ -291,12 +293,12 @@ export default function Advertise({ loaderData }: Route.ComponentProps) {
                   size="sm"
                   onClick={() => navigator.clipboard.writeText(getWalletAddress())}
                 >
-                  Copy
+                  {t("advertise.copy")}
                 </Button>
               </div>
 
               <p className="text-sm text-night-muted max-w-sm mx-auto">
-                After you have sent the transaction, click the button below to verify your ad purchase.
+                {t("advertise.afterSent")}
               </p>
 
               <div className="w-full max-w-sm mx-auto space-y-3 pt-4">
@@ -305,7 +307,7 @@ export default function Advertise({ loaderData }: Route.ComponentProps) {
                   onClick={handleVerify}
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Verifying Transaction..." : "I Have Paid"}
+                  {isSubmitting ? t("advertise.verifying") : t("advertise.iHavePaid")}
                 </Button>
                 <Button
                   variant="ghost"
@@ -313,7 +315,7 @@ export default function Advertise({ loaderData }: Route.ComponentProps) {
                   onClick={() => setShowQR(false)}
                   disabled={isSubmitting}
                 >
-                  Cancel
+                  {t("advertise.cancel")}
                 </Button>
               </div>
             </div>

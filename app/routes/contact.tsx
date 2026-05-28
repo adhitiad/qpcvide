@@ -4,6 +4,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
+import { useTranslation } from "~/context/I18nContext";
 
 export const meta = () => [
   { title: "Contact Us - Auiso" },
@@ -11,16 +12,15 @@ export const meta = () => [
 ];
 
 export default function Contact() {
+  const { t } = useTranslation();
   return (
     <main className="container mx-auto px-4 py-12 max-w-5xl text-night-text">
       <div className="text-center mb-12">
         <h1 className="text-4xl font-serif font-bold text-white mb-4">
-          Contact Us
+          {t("contact.title")}
         </h1>
         <p className="text-night-muted text-lg max-w-2xl mx-auto">
-          Have a question, feedback, or need to report an issue? We're here to
-          help. Reach out to our support team and we'll get back to you as soon
-          as possible.
+          {t("contact.subtitle")}
         </p>
       </div>
 
@@ -33,10 +33,10 @@ export default function Contact() {
             </div>
             <div>
               <h3 className="text-xl font-bold text-white mb-1">
-                Email Support
+                {t("contact.emailSupport")}
               </h3>
               <p className="text-night-muted mb-2">
-                For general inquiries and support:
+                {t("contact.generalInquiries")}
               </p>
               <Link
                 to="mailto:support@auiso.com"
@@ -53,10 +53,10 @@ export default function Contact() {
             </div>
             <div>
               <h3 className="text-xl font-bold text-white mb-1">
-                Legal & DMCA
+                {t("contact.legalDmca")}
               </h3>
               <p className="text-night-muted mb-2">
-                For copyright takedown notices and legal matters:
+                {t("contact.legalInquiries")}
               </p>
               <Link
                 to="mailto:legal@auiso.com"
@@ -71,7 +71,7 @@ export default function Contact() {
         {/* Contact Form */}
         <div className="bg-night-card p-8 rounded-xl border border-night-border shadow-xl">
           <h2 className="text-2xl font-bold text-white mb-6">
-            Send us a message
+            {t("contact.sendMessage")}
           </h2>
           <form
             className="space-y-4"
@@ -82,53 +82,53 @@ export default function Contact() {
           >
             <div>
               <label className="block text-sm font-medium text-night-muted mb-1">
-                Name
+                {t("contact.name")}
               </label>
               <Input
                 required
-                placeholder="Your name"
+                placeholder={t("contact.placeholderName")}
                 className="bg-night-bg border-night-border text-white"
               />
             </div>
             <div>
               <Label className="block text-sm font-medium text-night-muted mb-1">
-                Email
+                {t("contact.email")}
               </Label>
               <Input
                 type="email"
                 required
-                placeholder="your.email@example.com"
+                placeholder={t("contact.placeholderEmail")}
                 className="bg-night-bg border-night-border text-white"
               />
             </div>
             <div>
               <Label className="block text-sm font-medium text-night-muted mb-1">
-                Subject
+                {t("contact.subject")}
               </Label>
               <select className="w-full h-10 px-3 rounded-md bg-night-bg border border-night-border text-white focus:ring-1 focus:ring-night-accent focus:border-night-accent outline-none">
-                <option value="general">General Inquiry</option>
-                <option value="support">Technical Support</option>
-                <option value="billing">Billing Issue</option>
-                <option value="report">Report Content</option>
-                <option value="other">Other</option>
+                <option value="general">{t("contact.general")}</option>
+                <option value="support">{t("contact.support")}</option>
+                <option value="billing">{t("contact.billing")}</option>
+                <option value="report">{t("contact.report")}</option>
+                <option value="other">{t("contact.other")}</option>
               </select>
             </div>
             <div>
               <Label className="block text-sm font-medium text-night-muted mb-1">
-                Message
+                {t("contact.message")}
               </Label>
               <Textarea
                 required
                 rows={5}
                 className="w-full p-3 rounded-md bg-night-bg border border-night-border text-white focus:ring-1 focus:ring-night-accent focus:border-night-accent outline-none resize-none"
-                placeholder="How can we help you?"
+                placeholder={t("contact.placeholderMessage")}
               ></Textarea>
             </div>
             <Button
               type="submit"
               className="w-full bg-night-accent hover:bg-night-accent-light text-white font-bold py-6"
             >
-              Send Message
+              {t("contact.submit")}
             </Button>
           </form>
         </div>

@@ -119,6 +119,19 @@ presets: [vercelPreset()]
 
 Konfigurasi ini membuat output build siap dipakai Vercel tanpa server WebSocket/gRPC tambahan. Pastikan semua environment variable production diatur di dashboard Vercel sebelum deploy.
 
+## Keamanan & Anti-Pembajakan
+
+### Penambahan Watermark Statis
+Sebelum mengunggah video ke server VOD atau hosting pihak ketiga, admin disarankan untuk menambahkan watermark statis (logo Auiso) ke dalam video menggunakan FFmpeg.
+
+**Contoh Perintah FFmpeg:**
+```bash
+ffmpeg -i input_video.mp4 -i watermark.png -filter_complex "overlay=W-w-10:H-h-10" -codec:a copy output_video.mp4
+```
+Keterangan:
+- `overlay=W-w-10:H-h-10` menempatkan watermark di sudut kanan bawah dengan jarak 10 piksel dari tepi.
+- Setelah diproses, centang opsi "Saya sudah menambahkan watermark" saat menambah/mengedit video di Panel Admin.
+
 ## Struktur Penting
 
 - `app/routes`: route halaman dan API

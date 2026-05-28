@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { useTranslation } from "~/context/I18nContext";
 
 export const meta = () => [
   { title: "Terms of Service - Auiso" },
@@ -6,9 +7,10 @@ export const meta = () => [
 ];
 
 export default function TermsOfService() {
+  const { t } = useTranslation();
   return (
     <main className="container mx-auto px-4 py-12 max-w-4xl text-night-text">
-      <h1 className="text-4xl font-serif font-bold text-white mb-8 border-b border-night-border pb-4">Terms of Service</h1>
+      <h1 className="text-4xl font-serif font-bold text-white mb-8 border-b border-night-border pb-4">{t("legal.terms")}</h1>
       
       <div className="space-y-6 text-night-muted leading-relaxed">
         <section>
@@ -43,7 +45,7 @@ export default function TermsOfService() {
         </section>
 
         <div className="mt-8 pt-8 border-t border-night-border text-sm">
-          <p>Last updated: {new Date().toLocaleDateString("id-ID")}</p>
+          <p>{t("legal.lastUpdated")} {new Date().toLocaleDateString("id-ID")}</p>
           <p className="mt-2">If you do not agree to these terms, please do not use our Service. For inquiries, <Link to="/contact" className="text-night-cyan hover:underline">contact us</Link>.</p>
         </div>
       </div>

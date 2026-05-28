@@ -27,6 +27,7 @@ model User {
   likes        Like[]
   bookmarks    Bookmark[]
   watchHistory WatchHistory[]
+  pushSubscriptions PushSubscription[]
 }
 
 // ---------------------------------------------------------
@@ -38,6 +39,7 @@ model Video {
   title             String
   slug              String   @unique
   synopsis          String
+  summary           String?
   thumbnail         String
   duration          Int?
   isFeatured        Boolean  @default(false)
@@ -247,4 +249,43 @@ model SearchReferrer {
   createdAt      DateTime @default(now())
 
   @@index([fingerprint])
+}
+
+// ---------------------------------------------------------
+// PUSH NOTIFICATIONS
+// ---------------------------------------------------------
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, endpoint])
+}
+
+// ---------------------------------------------------------
+// SHARE TARGET & REPORTING
+// ---------------------------------------------------------
+
+model SharedLink {
+  id        String   @id @default(cuid())
+  url       String
+  title     String?
+  text      String?
+  createdAt DateTime @default(now())
+}
+
+model Report {
+  id        String   @id @default(cuid())
+  type      String   // "video", "comment"
+  targetId  String
+  reason    String
+  status    String   @default("PENDING") // PENDING, RESOLVED, REJECTED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

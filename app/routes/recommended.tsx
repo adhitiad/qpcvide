@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { VideoCard } from "../components/VideoCard";
 import { Sparkles, Search } from "lucide-react";
 import type { MetaFunction } from "react-router";
+import { useTranslation } from "~/context/I18nContext";
 
 export const meta: MetaFunction = () => {
   return [
@@ -14,6 +15,7 @@ export const meta: MetaFunction = () => {
 };
 
 export default function RecommendedPage() {
+  const { t } = useTranslation();
   const [recommendedVideos, setRecommendedVideos] = useState<any[]>([]);
   const [searchBasedVideos, setSearchBasedVideos] = useState<any[]>([]);
   const [searchedKeywords, setSearchedKeywords] = useState<string>("");
@@ -60,11 +62,11 @@ export default function RecommendedPage() {
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-serif font-bold text-white mb-8 flex items-center gap-2">
           <Sparkles className="w-8 h-8 text-night-accent" />
-          For You
+          {t("recommended.forYou")}
         </h1>
         <div className="flex items-center justify-center h-64 bg-night-card rounded-xl border border-night-border animate-pulse">
           <span className="text-night-muted">
-            Curating your personalized experience...
+            {t("recommended.curating")}
           </span>
         </div>
       </div>
@@ -75,7 +77,7 @@ export default function RecommendedPage() {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-serif font-bold text-white mb-8 flex items-center gap-2">
         <Sparkles className="w-8 h-8 text-night-accent" />
-        For You
+        {t("recommended.forYou")}
       </h1>
 
       {searchBasedVideos.length > 0 && (
@@ -83,7 +85,7 @@ export default function RecommendedPage() {
           <div className="flex items-center gap-2 mb-6">
             <Search className="w-5 h-5 text-night-cyan" />
             <h2 className="text-xl font-serif font-bold text-white">
-              Because you searched for{" "}
+              {t("recommended.becauseSearched")}{" "}
               <span className="text-night-cyan">"{searchedKeywords}"</span>...
             </h2>
           </div>
@@ -97,7 +99,7 @@ export default function RecommendedPage() {
 
       <section className="mb-12">
         <h2 className="text-xl font-serif font-bold text-white mb-6">
-          Recommended based on your history
+          {t("recommended.basedOnHistory")}
         </h2>
         {recommendedVideos.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
@@ -107,9 +109,9 @@ export default function RecommendedPage() {
           </div>
         ) : (
           <div className="bg-night-card border border-night-border rounded-xl p-8 text-center text-night-muted">
-            <p>We don't have enough data to recommend videos yet.</p>
+            <p>{t("recommended.notEnoughData")}</p>
             <p className="mt-2">
-              Start watching videos to improve your recommendations!
+              {t("recommended.startWatching")}
             </p>
           </div>
         )}

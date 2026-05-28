@@ -19,6 +19,8 @@ import "./app.css";
 
 import { prisma } from "~/lib/db.server";
 import { getUser } from "~/lib/auth.server";
+import { getLocale, getDictionary } from "~/lib/i18n.server";
+import { I18nProvider } from "~/context/I18nContext";
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -53,6 +55,9 @@ export async function loader({ request }: Route.LoaderArgs) {
     });
   }
 
+  const locale = await getLocale(request);
+  const dictionary = await getDictionary(locale);
+
   return {
     isAgeVerified: session.get("age_verified") === true,
     googleAdsId: process.env.GOOGLE_ADS_CLIENT_ID,
@@ -60,8 +65,11 @@ export async function loader({ request }: Route.LoaderArgs) {
     gaMeasurementId: process.env.GA_MEASUREMENT_ID,
     supabaseUrl: process.env.SUPABASE_URL,
     supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
+    vapidPublicKey: process.env.VAPID_PUBLIC_KEY,
     user,
     origin: new URL(request.url).origin,
+    locale,
+    dictionary,
   };
 }
 
@@ -89,14 +97,18 @@ export const Layout = ({
   const googleAdsId = loaderData?.googleAdsId;
   const fbPixelId = loaderData?.fbPixelId;
   const gaMeasurementId = loaderData?.gaMeasurementId;
+  const locale = loaderData?.locale || "en";
+  const dictionary = loaderData?.dictionary || {};
 
   return (
-    <html lang="id" className="dark">
+    <html lang={locale} className="dark">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#0A0A0F" />
 
         {/* Global JSON-LD */}
         {loaderData?.origin && (
@@ -170,15 +182,17 @@ export const Layout = ({
         )}
       </head>
       <body className="font-sans flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-1 flex flex-col">
-          <TooltipProvider>{children}</TooltipProvider>
-        </main>
-        <Footer />
-        <AgeVerificationModal isVerified={isAgeVerified} />
-        {loaderData?.user?.role !== "premium" ||
-          (loaderData?.user?.role !== "admin" && <AntiAdBlock />)}
-        <PrivacyConsentBanner />
+        <I18nProvider locale={locale} dictionary={dictionary}>
+          <Header />
+          <main className="flex-1 flex flex-col">
+            <TooltipProvider>{children}</TooltipProvider>
+          </main>
+          <Footer />
+          <AgeVerificationModal isVerified={isAgeVerified} />
+          {loaderData?.user?.role !== "premium" ||
+            (loaderData?.user?.role !== "admin" && <AntiAdBlock />)}
+          <PrivacyConsentBanner />
+        </I18nProvider>
         <ScrollRestoration />
         <script src="/js/fingerprint.js"></script>
         <script
@@ -214,7 +228,24 @@ export const Layout = ({
               window.ENV = ${JSON.stringify({
                 SUPABASE_URL: loaderData?.supabaseUrl,
                 SUPABASE_ANON_KEY: loaderData?.supabaseAnonKey,
+                VAPID_PUBLIC_KEY: loaderData?.vapidPublicKey,
               })};
+              
+              // Register Service Worker for PWA
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                  navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                    .then(reg => console.log('SW registered!', reg))
+                    .catch(err => console.error('SW registration failed', err));
+                });
+              }
+
+              // Handle PWA Install Prompt
+              window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                window.deferredPrompt = e;
+                // You can trigger a custom UI here to show "Install App"
+              });
             `
           }}
         />

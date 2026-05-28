@@ -15,6 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
+import { useTranslation } from "~/context/I18nContext";
 
 const registerSchema = z
   .object({
@@ -95,6 +96,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function Register() {
+  const { t } = useTranslation();
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
@@ -104,17 +106,17 @@ export default function Register() {
       <Card className="w-full max-w-md bg-night-card border-night-border text-night-text">
         <CardHeader>
           <CardTitle className="text-2xl font-serif text-night-accent text-center">
-            Create Account
+            {t("register.title")}
           </CardTitle>
           <CardDescription className="text-night-muted text-center">
-            Join us to track and watch your favorite video
+            {t("register.subtitle")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Form method="post" className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium" htmlFor="username">
-                Username
+                {t("register.username")}
               </label>
               <Input
                 id="username"
@@ -132,7 +134,7 @@ export default function Register() {
 
             <div className="space-y-2">
               <label className="text-sm font-medium" htmlFor="email">
-                Email
+                {t("register.email")}
               </label>
               <Input
                 id="email"
@@ -151,7 +153,7 @@ export default function Register() {
 
             <div className="space-y-2">
               <label className="text-sm font-medium" htmlFor="password">
-                Password
+                {t("register.password")}
               </label>
               <Input
                 id="password"
@@ -169,7 +171,7 @@ export default function Register() {
 
             <div className="space-y-2">
               <label className="text-sm font-medium" htmlFor="confirmPassword">
-                Confirm Password
+                {t("register.confirmPassword")}
               </label>
               <Input
                 id="confirmPassword"
@@ -190,15 +192,15 @@ export default function Register() {
               className="w-full bg-night-accent hover:bg-night-accent-light text-white transition-all shadow-[0_0_15px_rgba(124,58,237,0.3)] hover:shadow-[0_0_25px_rgba(124,58,237,0.5)]"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Creating Account..." : "Register"}
+              {isSubmitting ? t("register.creating") : t("register.submit")}
             </Button>
           </Form>
         </CardContent>
         <CardFooter className="flex justify-center">
           <p className="text-sm text-night-muted">
-            Already have an account?{" "}
+            {t("register.hasAccount")}{" "}
             <Link to="/login" className="text-night-accent hover:underline">
-              Log in
+              {t("register.login")}
             </Link>
           </p>
         </CardFooter>

@@ -7,6 +7,7 @@ import { Prisma } from "@prisma/client";
 import { useInfiniteScroll } from "../hooks/use-infinite-scroll";
 import { Loader2 } from "lucide-react";
 import { cachedQuery } from "../lib/redis.server";
+import { useTranslation } from "~/context/I18nContext";
 
 export const meta = ({ data }: Route.MetaArgs) => {
   if (!data?.category) {
@@ -100,6 +101,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 }
 
 export default function CategoryPage() {
+  const { t } = useTranslation();
   const { category, videos: initialVideos, totalVideos, tags, page: initialPage, totalPages, url } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
 
@@ -144,10 +146,10 @@ export default function CategoryPage() {
       
       <div className="mb-8">
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-2 uppercase">
-          {category.name} <span className="text-night-accent">Video</span>
+          {category.name} <span className="text-night-accent">{t("category.video")}</span>
         </h1>
         <p className="text-night-muted">
-          Showing {videos.length} of {totalVideos} results in {category.name}
+          {t("category.showing", { count: videos.length, total: totalVideos, category: category.name })}
         </p>
       </div>
 
@@ -164,8 +166,8 @@ export default function CategoryPage() {
           </div>
         ) : (
           <div className="text-center py-20 bg-night-card rounded-xl border border-night-border">
-            <h3 className="text-xl text-night-muted">No videos found</h3>
-            <p className="text-night-muted/60 mt-2">Try adjusting your filters.</p>
+            <h3 className="text-xl text-night-muted">{t("search.noResults")}</h3>
+            <p className="text-night-muted/60 mt-2">{t("search.adjustQuery")}</p>
           </div>
         )}
       </section>

@@ -7,6 +7,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Button } from "./ui/button";
+import { useTranslation } from "~/context/I18nContext";
 
 interface FilterBarProps {
   tags: { id: string; name: string }[];
@@ -14,6 +15,7 @@ interface FilterBarProps {
 }
 
 export function FilterBar({ tags, categories }: FilterBarProps) {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -47,11 +49,11 @@ export function FilterBar({ tags, categories }: FilterBarProps) {
           <div>
             <Select value={currentCat} onValueChange={(val) => handleFilterChange("category", val)}>
               <SelectTrigger className="w-full bg-night-bg border-night-border text-night-text">
-                <SelectValue placeholder="All Categories" />
+                <SelectValue placeholder={t("filter.allCategories")} />
               </SelectTrigger>
               <SelectContent className="bg-night-card border-night-border">
                 <SelectItem value="all" className="text-night-text focus:bg-night-hover">
-                  All Categories
+                  {t("filter.allCategories")}
                 </SelectItem>
                 {categories.map((c) => (
                   <SelectItem key={c.id} value={c.name} className="text-night-text focus:bg-night-hover">
@@ -67,11 +69,11 @@ export function FilterBar({ tags, categories }: FilterBarProps) {
         <div>
           <Select value={currentTag} onValueChange={(val) => handleFilterChange("tag", val)}>
             <SelectTrigger className="w-full bg-night-bg border-night-border text-night-text">
-              <SelectValue placeholder="All Tags" />
+              <SelectValue placeholder={t("filter.allTags")} />
             </SelectTrigger>
             <SelectContent className="bg-night-card border-night-border">
               <SelectItem value="all" className="text-night-text focus:bg-night-hover">
-                All Tags
+                {t("filter.allTags")}
               </SelectItem>
               {tags.map((t) => (
                 <SelectItem key={t.id} value={t.name} className="text-night-text focus:bg-night-hover">
@@ -86,17 +88,17 @@ export function FilterBar({ tags, categories }: FilterBarProps) {
         <div>
           <Select value={currentSort} onValueChange={(val) => handleFilterChange("sort", val)}>
             <SelectTrigger className="w-full bg-night-bg border-night-border text-night-text">
-              <SelectValue placeholder="Sort By" />
+              <SelectValue placeholder={t("filter.sortBy")} />
             </SelectTrigger>
             <SelectContent className="bg-night-card border-night-border">
               <SelectItem value="newest" className="text-night-text focus:bg-night-hover">
-                Newest First
+                {t("filter.newest")}
               </SelectItem>
               <SelectItem value="popular" className="text-night-text focus:bg-night-hover">
-                Most Popular
+                {t("filter.popular")}
               </SelectItem>
               <SelectItem value="views" className="text-night-text focus:bg-night-hover">
-                Most Viewed
+                {t("filter.views")}
               </SelectItem>
             </SelectContent>
           </Select>
@@ -109,7 +111,7 @@ export function FilterBar({ tags, categories }: FilterBarProps) {
           onClick={handleClearFilters}
           className="w-full sm:w-auto"
         >
-          Clear Filters
+          {t("filter.clear")}
         </Button>
       )}
     </div>

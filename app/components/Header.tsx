@@ -1,5 +1,8 @@
 import { Link, Form } from "react-router";
+import { useTranslation } from "~/context/I18nContext";
 import { SearchBar } from "./SearchBar";
+import { PushNotificationToggle } from "./PushNotificationToggle";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 import { AdDisplay } from "./ads/AdDisplay";
 import { Search, ChevronDown, User, Sparkles, Bot } from "lucide-react";
 import { Button } from "~/components/ui/button";
@@ -23,6 +26,7 @@ import { useRouteLoaderData } from "react-router";
 export function Header() {
   const rootData = useRouteLoaderData("root") as any;
   const user = rootData?.user;
+  const { t } = useTranslation();
 
   const specialCategories = [
     { name: "BDSM", slug: "bdsm" },
@@ -54,38 +58,38 @@ export function Header() {
             to="/"
             className="text-night-text hover:text-night-accent transition-colors"
           >
-            Home
+            {t("nav.home")}
           </Link>
           <Link
             to="/recommended"
             className="text-night-text hover:text-night-accent transition-colors"
           >
-            For You
+            {t("nav.foryou")}
           </Link>
           <Link
             to="/search"
             className="text-night-text hover:text-night-accent transition-colors"
           >
-            Browse
+            {t("nav.browse")}
           </Link>
           <Link
             to="/search-ai"
             className="text-night-cyan hover:text-night-accent flex items-center gap-1 transition-colors font-bold"
           >
-            <Sparkles className="w-4 h-4" /> AI Search
+            <Sparkles className="w-4 h-4" /> {t("nav.aiSearch")}
           </Link>
           <Link
             to="/chat"
             className="text-night-accent hover:text-white flex items-center gap-1 transition-colors font-bold relative group"
           >
-            <Bot className="w-4 h-4" /> AI Chat
+            <Bot className="w-4 h-4" /> {t("nav.aiChat")}
             <span className="absolute -top-3 -right-4 bg-red-500 text-white text-[9px] px-1 rounded-sm opacity-80 group-hover:opacity-100 transition-opacity">18+</span>
           </Link>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-1 text-night-text hover:text-night-accent transition-colors focus:outline-none">
-                Categories <ChevronDown className="h-4 w-4" />
+                {t("nav.categories")} <ChevronDown className="h-4 w-4" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-night-card border-night-border text-night-text">
@@ -112,7 +116,14 @@ export function Header() {
 
           <div className="flex items-center gap-2">
             {user ? (
-              <DropdownMenu>
+              <>
+                <div className="hidden sm:block">
+                  <LanguageSwitcher />
+                </div>
+                <div className="hidden sm:block">
+                  <PushNotificationToggle />
+                </div>
+                <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="flex items-center gap-2 text-night-text hover:bg-night-hover">
                     <User className="h-4 w-4" />
@@ -125,40 +136,44 @@ export function Header() {
                 <DropdownMenuContent className="bg-night-card border-night-border text-night-text" align="end">
                   {user.role === "user" && (
                     <DropdownMenuItem asChild className="hover:bg-night-hover cursor-pointer text-yellow-500 font-bold">
-                      <Link to="/upgrade">Upgrade Premium</Link>
+                      <Link to="/upgrade">{t("nav.upgrade")}</Link>
                     </DropdownMenuItem>
                   )}
                   {user.role === "admin" && (
                     <DropdownMenuItem asChild className="hover:bg-night-hover cursor-pointer text-night-accent">
-                      <Link to="/admin">Admin Panel</Link>
+                      <Link to="/admin">{t("nav.admin")}</Link>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem asChild className="hover:bg-night-hover cursor-pointer">
-                    <Link to="/advertise">Buy Ads</Link>
+                    <Link to="/advertise">{t("nav.advertise")}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild className="hover:bg-night-hover cursor-pointer text-red-500">
                     <Form method="post" action="/logout" className="w-full">
-                      <button type="submit" className="w-full text-left">Logout</button>
+                      <button type="submit" className="w-full text-left">{t("nav.logout")}</button>
                     </Form>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
-              </DropdownMenu>
+                </DropdownMenu>
+              </>
             ) : (
               <>
+                <div className="hidden sm:block">
+                  <LanguageSwitcher />
+                </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   asChild
                   className="hidden sm:flex text-night-text hover:bg-night-hover hover:text-night-accent"
                 >
-                  <Link to="/login">Login</Link>
+                  <Link to="/login">{t("nav.login")}</Link>
                 </Button>
                 <Button
                   size="sm"
                   asChild
                   className="hidden sm:flex bg-night-accent hover:bg-night-accent-light text-white card-hover"
                 >
-                  <Link to="/register">Register</Link>
+                  <Link to="/register">{t("nav.register")}</Link>
                 </Button>
               </>
             )}
@@ -177,14 +192,18 @@ export function Header() {
                   </SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col gap-4 mt-6">
-                  <Link to="/" className="text-night-text hover:text-night-accent transition-colors text-lg">Home</Link>
-                  <Link to="/recommended" className="text-night-text hover:text-night-accent transition-colors text-lg">For You</Link>
-                  <Link to="/search" className="text-night-text hover:text-night-accent transition-colors text-lg">Browse</Link>
-                  <Link to="/search-ai" className="text-night-cyan hover:text-night-accent transition-colors text-lg flex items-center gap-2 font-bold"><Sparkles className="w-5 h-5"/> AI Search</Link>
-                  <Link to="/chat" className="text-night-accent hover:text-white transition-colors text-lg flex items-center gap-2 font-bold"><Bot className="w-5 h-5"/> AI Chat <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-sm">18+</span></Link>
+                  <div className="pb-4 border-b border-night-border flex justify-between items-center">
+                    <span className="text-sm font-semibold text-night-muted">Language</span>
+                    <LanguageSwitcher />
+                  </div>
+                  <Link to="/" className="text-night-text hover:text-night-accent transition-colors text-lg">{t("nav.home")}</Link>
+                  <Link to="/recommended" className="text-night-text hover:text-night-accent transition-colors text-lg">{t("nav.foryou")}</Link>
+                  <Link to="/search" className="text-night-text hover:text-night-accent transition-colors text-lg">{t("nav.browse")}</Link>
+                  <Link to="/search-ai" className="text-night-cyan hover:text-night-accent transition-colors text-lg flex items-center gap-2 font-bold"><Sparkles className="w-5 h-5"/> {t("nav.aiSearch")}</Link>
+                  <Link to="/chat" className="text-night-accent hover:text-white transition-colors text-lg flex items-center gap-2 font-bold"><Bot className="w-5 h-5"/> {t("nav.aiChat")} <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-sm">18+</span></Link>
                   
                   <div className="pt-4 border-t border-night-border">
-                    <h4 className="text-sm font-semibold text-night-muted mb-3">Categories</h4>
+                    <h4 className="text-sm font-semibold text-night-muted mb-3">{t("nav.categories")}</h4>
                     <div className="flex flex-col gap-3">
                       {specialCategories.map((cat) => (
                         <Link key={cat.slug} to={`/category/${cat.slug}`} className="text-night-text hover:text-night-accent transition-colors">
@@ -194,13 +213,19 @@ export function Header() {
                     </div>
                   </div>
 
+                  {user && (
+                    <div className="pt-4 border-t border-night-border">
+                      <PushNotificationToggle />
+                    </div>
+                  )}
+
                   {!user && (
                     <div className="pt-4 border-t border-night-border flex flex-col gap-3">
                       <Button asChild variant="outline" className="w-full border-night-border hover:bg-night-hover">
-                        <Link to="/login">Login</Link>
+                        <Link to="/login">{t("nav.login")}</Link>
                       </Button>
                       <Button asChild className="w-full bg-night-accent hover:bg-night-accent-light text-white">
-                        <Link to="/register">Register</Link>
+                        <Link to="/register">{t("nav.register")}</Link>
                       </Button>
                     </div>
                   )}

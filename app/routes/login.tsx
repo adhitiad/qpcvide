@@ -15,6 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
+import { useTranslation } from "~/context/I18nContext";
 
 const loginSchema = z.object({
   identifier: z.string().min(1, "Email or Username is required"),
@@ -82,6 +83,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function Login() {
+  const { t } = useTranslation();
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
@@ -91,17 +93,17 @@ export default function Login() {
       <Card className="w-full max-w-md bg-night-card border-night-border text-night-text">
         <CardHeader>
           <CardTitle className="text-2xl font-serif text-night-accent text-center">
-            Welcome Back
+            {t("login.welcomeBack")}
           </CardTitle>
           <CardDescription className="text-night-muted text-center">
-            Login to your account
+            {t("login.subtitle")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Form method="post" className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium" htmlFor="identifier">
-                Email or Username
+                {t("login.emailOrUsername")}
               </label>
               <Input
                 id="identifier"
@@ -119,7 +121,7 @@ export default function Login() {
 
             <div className="space-y-2">
               <label className="text-sm font-medium" htmlFor="password">
-                Password
+                {t("login.password")}
               </label>
               <Input
                 id="password"
@@ -140,15 +142,15 @@ export default function Login() {
               className="w-full bg-night-accent hover:bg-night-accent-light text-white transition-all shadow-[0_0_15px_rgba(124,58,237,0.3)] hover:shadow-[0_0_25px_rgba(124,58,237,0.5)]"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Logging in..." : "Login"}
+              {isSubmitting ? t("login.loggingIn") : t("login.submit")}
             </Button>
           </Form>
         </CardContent>
         <CardFooter className="flex justify-center">
           <p className="text-sm text-night-muted">
-            Don't have an account?{" "}
+            {t("login.noAccount")}{" "}
             <Link to="/register" className="text-night-accent hover:underline">
-              Register
+              {t("login.register")}
             </Link>
           </p>
         </CardFooter>

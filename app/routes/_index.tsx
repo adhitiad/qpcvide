@@ -128,6 +128,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 import { Suspense } from "react";
 import { Await } from "react-router";
+import { useTranslation } from "~/context/I18nContext";
 
 export default function Home() {
   const loaderData = useLoaderData<typeof loader>();
@@ -209,6 +210,8 @@ function VideoGrid({ initialVideos, totalVideos, page, limit, url, searchParams 
     }))
   };
 
+  const { t } = useTranslation();
+
   return (
     <>
       <script
@@ -218,10 +221,10 @@ function VideoGrid({ initialVideos, totalVideos, page, limit, url, searchParams 
       <section className="mb-12">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-serif font-bold text-white">
-            Explore Video
+            {t("home.exploreVideo")}
           </h2>
           <span className="text-night-muted text-sm">
-            Showing {videos.length} of {totalVideos} results
+            {t("home.showingResults", { count: videos.length, total: totalVideos })}
           </span>
         </div>
 
@@ -233,8 +236,8 @@ function VideoGrid({ initialVideos, totalVideos, page, limit, url, searchParams 
           </div>
         ) : (
           <div className="text-center py-20 bg-night-card rounded-xl border border-night-border">
-            <h3 className="text-xl text-night-muted">No videos found</h3>
-            <p className="text-night-muted/60 mt-2">Try adjusting your filters.</p>
+            <h3 className="text-xl text-night-muted">{t("home.noVideos")}</h3>
+            <p className="text-night-muted/60 mt-2">{t("home.adjustFilters")}</p>
           </div>
         )}
       </section>

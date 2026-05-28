@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { getBrowserClient } from "~/lib/supabase.client";
+import { useTranslation } from "~/context/I18nContext";
 
 interface Comment {
   id: string;
@@ -22,6 +23,7 @@ interface CommentSectionProps {
 }
 
 export function CommentSection({ videoId, initialComments, isLoggedIn }: CommentSectionProps) {
+  const { t } = useTranslation();
   const [comments, setComments] = useState<Comment[]>(initialComments);
   const fetcher = useFetcher();
   const formRef = useRef<HTMLFormElement>(null);
@@ -64,7 +66,7 @@ export function CommentSection({ videoId, initialComments, isLoggedIn }: Comment
 
   return (
     <div className="bg-night-card p-6 rounded-2xl border border-night-border mt-8 shadow-lg">
-      <h3 className="text-2xl font-serif font-bold mb-6">Comments ({comments.length})</h3>
+      <h3 className="text-2xl font-serif font-bold mb-6">{t("comment.title", { count: comments.length })}</h3>
 
       {isLoggedIn ? (
         <fetcher.Form method="post" action="/api/comments" ref={formRef} className="mb-8 flex gap-4">
@@ -72,7 +74,7 @@ export function CommentSection({ videoId, initialComments, isLoggedIn }: Comment
           <div className="flex-1">
             <Input
               name="content"
-              placeholder="Add a comment..."
+              placeholder={t("comment.placeholder")}
               className="bg-night-bg border-night-border text-white w-full"
               required
               minLength={3}
@@ -87,12 +89,14 @@ export function CommentSection({ videoId, initialComments, isLoggedIn }: Comment
             disabled={fetcher.state !== "idle"}
             className="bg-night-accent hover:bg-night-accent-light text-white"
           >
-            {fetcher.state !== "idle" ? "Posting..." : "Post"}
+            {fetcher.state !== "idle" ? t("comment.posting") : t("comment.post")}
           </Button>
         </fetcher.Form>
       ) : (
         <div className="mb-8 p-4 bg-night-bg border border-night-border rounded-lg text-center text-night-muted">
-          Please <a href={`/login?redirectTo=/video/${videoId}`} className="text-night-cyan hover:underline">log in</a> to post a comment.
+          {t("comment.loginPrompt").split(t("comment.login"))[0]}
+          <a href={`/login?redirectTo=/video/${videoId}`} className="text-night-cyan hover:underline">{t("comment.login")}</a>
+          {t("comment.loginPrompt").split(t("comment.login"))[1]}
         </div>
       )}
 
@@ -116,7 +120,7 @@ export function CommentSection({ videoId, initialComments, isLoggedIn }: Comment
           </div>
         ))}
         {comments.length === 0 && (
-          <p className="text-center text-night-muted py-8">No comments yet. Be the first!</p>
+          <p className="text-center text-night-muted py-8">{t("comment.noComments")}</p>
         )}
       </div>
     </div>

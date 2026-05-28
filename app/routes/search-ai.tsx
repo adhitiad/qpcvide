@@ -4,6 +4,7 @@ import { VideoCard } from "../components/VideoCard";
 import { Sparkles, Search, Loader2, Bot } from "lucide-react";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
+import { useTranslation } from "~/context/I18nContext";
 
 export const meta = () => {
   return [
@@ -16,6 +17,7 @@ export const meta = () => {
 };
 
 export default function SearchAIPage() {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
 
@@ -70,11 +72,10 @@ export default function SearchAIPage() {
           <Bot className="w-12 h-12 text-night-accent" />
         </div>
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-4">
-          AI Semantic Search
+          {t("searchAi.title")}
         </h1>
         <p className="text-night-muted text-lg mb-8">
-          Type a concept, mood, or complex scenario. Our AI will understand the
-          context and find the most relevant videos using Exa's semantic engine.
+          {t("searchAi.description")}
         </p>
 
         <form
@@ -84,7 +85,7 @@ export default function SearchAIPage() {
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="e.g. A romantic story with a tragic ending..."
+            placeholder={t("searchAi.placeholder")}
             className="w-full h-16 pl-6 pr-32 rounded-full bg-night-card border-2 border-night-border text-lg text-white placeholder:text-night-muted/50 focus-visible:border-night-accent focus-visible:ring-1 focus-visible:ring-night-accent transition-all"
           />
           <Button
@@ -97,7 +98,7 @@ export default function SearchAIPage() {
             ) : (
               <Sparkles className="w-5 h-5 mr-2" />
             )}
-            {loading ? "Thinking..." : "Search"}
+            {loading ? t("searchAi.thinking") : t("searchAi.search")}
           </Button>
         </form>
       </div>
@@ -107,13 +108,13 @@ export default function SearchAIPage() {
           <div className="mb-8 border-b border-night-border pb-6">
             <h2 className="text-2xl font-serif font-bold text-white flex items-center gap-2">
               <Search className="w-6 h-6 text-night-cyan" />
-              Results for "{query}"
+              {t("searchAi.resultsFor")} "{query}"
             </h2>
 
             {expandedKeywords.length > 0 && (
               <div className="mt-4 flex flex-wrap items-center gap-2 text-sm">
                 <span className="text-night-muted">
-                  AI expanded your search with:
+                  {t("searchAi.expanded")}
                 </span>
                 {expandedKeywords.map((kw, i) => (
                   <span
@@ -128,7 +129,7 @@ export default function SearchAIPage() {
 
             {exaContext && (
               <div className="mt-2 text-xs text-green-400 font-medium">
-                ✓ Powered by Exa Semantic Context
+                {t("searchAi.poweredBy")}
               </div>
             )}
           </div>
@@ -152,10 +153,10 @@ export default function SearchAIPage() {
             <div className="text-center py-20 bg-night-card rounded-xl border border-night-border">
               <Bot className="w-16 h-16 mx-auto text-night-muted mb-4 opacity-50" />
               <h3 className="text-xl text-night-muted font-serif">
-                No semantic matches found
+                {t("searchAi.noMatches")}
               </h3>
               <p className="text-night-muted/60 mt-2">
-                Try describing your intent differently.
+                {t("searchAi.tryDescribing")}
               </p>
             </div>
           )}

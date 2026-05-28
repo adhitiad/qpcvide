@@ -1,49 +1,51 @@
-import { en } from "../i18n/en";
-import { id } from "../i18n/id";
-import { ja } from "../i18n/ja";
-import { es } from "../i18n/es";
-import { pt } from "../i18n/pt";
-import { fr } from "../i18n/fr";
+import { createCookie } from "react-router";
 
-const dictionaries: Record<string, typeof en> = {
-  en,
-  id,
-  ja,
-  es,
-  pt,
-  fr,
-};
+export const supportedLocales = ["en", "id", "ja"] as const;
+export type Locale = typeof supportedLocales[number];
 
-export const defaultLocale = "en";
-export const supportedLocales = Object.keys(dictionaries);
+export const langCookie = createCookie("lang", {
+  maxAge: 60 * 60 * 24 * 365, // 1 year
+  path: "/",
+  sameSite: "lax",
+});
 
-export function getLocale(request: Request): string {
-  const acceptLanguage = request.headers.get("Accept-Language");
-  if (!acceptLanguage) return defaultLocale;
+export async function getLocale(request: Request): Promise<Locale> {
+  const url = new URL(request.url);
+  const pathParts = url.pathname.split("/").filter(Boolean);
+  
+  // 1. Check URL Path (e.g. /en/something)
+  const pathLang = pathParts[0] as Locale;
+  if (supportedLocales.includes(pathLang)) {
+    return pathLang;
+  }
 
-  // accept-language is like: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5
-  const langs = acceptLanguage.split(",").map((lang) => {
-    const [locale, q] = lang.split(";");
-    const weight = q ? parseFloat(q.split("=")[1]) : 1.0;
-    const code = locale.trim().split("-")[0].toLowerCase();
-    return { code, weight };
-  });
+  // 2. Check Cookie
+  const cookieHeader = request.headers.get("Cookie");
+  const cookieLang = await langCookie.parse(cookieHeader);
+  if (cookieLang && supportedLocales.includes(cookieLang)) {
+    return cookieLang as Locale;
+  }
 
-  langs.sort((a, b) => b.weight - a.weight);
-
-  for (const lang of langs) {
-    if (supportedLocales.includes(lang.code)) {
-      return lang.code;
+  // 3. Check Accept-Language Header
+  const acceptLang = request.headers.get("Accept-Language");
+  if (acceptLang) {
+    const preferredLang = acceptLang.split(",")[0].split("-")[0] as Locale;
+    if (supportedLocales.includes(preferredLang)) {
+      return preferredLang;
     }
   }
 
-  return defaultLocale;
+  // 4. Default Fallback
+  return "en";
 }
 
-export function getDictionary(request: Request) {
-  const locale = getLocale(request);
-  return {
-    locale,
-    dict: dictionaries[locale] || dictionaries[defaultLocale],
-  };
+export async function getDictionary(locale: Locale) {
+  try {
+    const dict = await import(`../i18n/${locale}.json`);
+    return dict.default;
+  } catch (error) {
+    console.error(`Failed to load dictionary for locale: ${locale}`, error);
+    const fallback = await import(`../i18n/en.json`);
+    return fallback.default;
+  }
 }

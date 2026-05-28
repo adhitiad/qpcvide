@@ -3,6 +3,7 @@ import { requireUserId } from "../lib/auth.server";
 import { prisma } from "../lib/db.server";
 import { VideoCard } from "../components/VideoCard";
 import { useLoaderData } from "react-router";
+import { useTranslation } from "~/context/I18nContext";
 
 export const meta = () => {
   return [
@@ -27,16 +28,17 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function HistoryPage() {
+  const { t } = useTranslation();
   const { history } = useLoaderData<typeof loader>();
 
   return (
     <main className="container mx-auto px-4 py-8 min-h-[80vh]">
       <div className="mb-8 border-b border-night-border pb-4">
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-2">
-          Watch <span className="text-night-accent">History</span>
+          {t("history.title")} <span className="text-night-accent">{t("history.highlight")}</span>
         </h1>
         <p className="text-night-muted">
-          Your recently watched videos.
+          {t("history.subtitle")}
         </p>
       </div>
 
@@ -48,8 +50,8 @@ export default function HistoryPage() {
         </div>
       ) : (
         <div className="text-center py-20 bg-night-card rounded-xl border border-night-border">
-          <h3 className="text-xl text-night-muted">No history found</h3>
-          <p className="text-night-muted/60 mt-2">Start watching some videos!</p>
+          <h3 className="text-xl text-night-muted">{t("history.noResults")}</h3>
+          <p className="text-night-muted/60 mt-2">{t("history.startWatching")}</p>
         </div>
       )}
     </main>

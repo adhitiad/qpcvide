@@ -12,6 +12,7 @@ import {
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { OptimizedImage } from "./OptimizedImage";
+import { useTranslation } from "~/context/I18nContext";
 
 import { CategoryBadge } from "./CategoryBadge";
 
@@ -29,6 +30,7 @@ interface HeroCarouselProps {
 }
 
 export function HeroCarousel({ items }: HeroCarouselProps) {
+  const { t } = useTranslation();
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   );
@@ -77,7 +79,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
                     >
                       <Link to={`/video/${video.slug}`}>
                         <Play className="w-5 h-5 fill-current" />
-                        Watch Now
+                        {t("video.watchNow")}
                       </Link>
                     </Button>
                     <Button
@@ -88,7 +90,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
                     >
                       <Link to={`/video/${video.slug}`}>
                         <Info className="w-5 h-5" />
-                        Details
+                        {t("video.details")}
                       </Link>
                     </Button>
                   </div>

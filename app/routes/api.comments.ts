@@ -4,6 +4,7 @@ import { prisma } from "../lib/db.server";
 import { requireUserId } from "../lib/auth.server";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
+import { checkRateLimit } from "../lib/rate-limit.server";
 
 const commentSchema = z.object({
   videoId: z.string(),
@@ -18,6 +19,15 @@ export async function action({ request }: Route.ActionArgs) {
   const result = commentSchema.safeParse(payload);
   if (!result.success) {
     return data({ errors: result.error.flatten().fieldErrors }, { status: 400 });
+  }
+
+  // Rate Limiting: 5 comments per minute per user
+  const limitStatus = checkRateLimit(`comment:${userId}`, 5, 60 * 1000);
+  if (!limitStatus.success) {
+    return data(
+      { errors: { content: ["You are commenting too fast. Please wait a minute."] } },
+      { status: 429 }
+    );
   }
 
   const { videoId, content } = result.data;

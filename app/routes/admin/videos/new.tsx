@@ -10,7 +10,8 @@ import { Textarea } from "../../../components/ui/textarea";
 import { Checkbox } from "../../../components/ui/checkbox";
 import { Switch } from "../../../components/ui/switch";
 import { Label } from "../../../components/ui/label";
-import { ArrowLeft, Upload } from "lucide-react";
+import { Badge } from "../../../components/ui/badge";
+import { ArrowLeft, Upload, Sparkles, Loader2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -24,7 +25,8 @@ export async function loader({ request }: Route.LoaderArgs) {
   const categories = await prisma.category.findMany({
     orderBy: { name: "asc" },
   });
-  return { categories };
+  const hasAiTagging = !!process.env.GROQ_API_KEY;
+  return { categories, hasAiTagging };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -36,6 +38,7 @@ export async function action({ request }: Route.ActionArgs) {
   if (!slug) slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
   const synopsis = formData.get("synopsis") as string;
+  const summary = formData.get("summary") as string;
   const durationStr = formData.get("duration") as string;
   const duration = durationStr ? parseInt(durationStr, 10) : null;
   const videoPlatform = formData.get("videoPlatform") as string;
@@ -55,15 +58,53 @@ export async function action({ request }: Route.ActionArgs) {
   const categoryIds = formData.getAll("categoryIds") as string[];
 
   // Thumbnail upload
-  const thumbnailFile = formData.get("thumbnail") as File;
+  const thumbnailFiles = formData.getAll("thumbnail") as File[];
   let thumbnailUrl = "";
 
-  if (thumbnailFile && thumbnailFile.size > 0) {
-    const url = await uploadFileToSupabase(thumbnailFile, "thumbnails");
-    if (!url) {
+  if (thumbnailFiles && thumbnailFiles.length > 0 && thumbnailFiles[0].size > 0) {
+    const uploadedUrls = [];
+    for (const file of thumbnailFiles) {
+      if (file.size > 0) {
+        const url = await uploadFileToSupabase(file, "thumbnails");
+        if (url) uploadedUrls.push(url);
+      }
+    }
+    
+    if (uploadedUrls.length === 0) {
       return { error: "Failed to upload thumbnail to Supabase." };
     }
-    thumbnailUrl = url;
+
+    if (uploadedUrls.length === 1) {
+      thumbnailUrl = uploadedUrls[0];
+    } else {
+      try {
+        const apiKey = process.env.GROQ_API_KEY;
+        if (apiKey) {
+          const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: "POST",
+            headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
+            body: JSON.stringify({
+              model: "llama-3.2-90b-vision-preview",
+              messages: [{
+                role: "user",
+                content: [
+                  { type: "text", text: "Berikan indeks (0 sampai N-1) dari gambar yang paling estetis. HANYA JSON: {\"bestIndex\": 0}" },
+                  ...uploadedUrls.map(url => ({ type: "image_url", image_url: { url } }))
+                ]
+              }],
+              response_format: { type: "json_object" }
+            }),
+          });
+          const json = await response.json();
+          const parsed = JSON.parse(json.choices[0].message.content);
+          thumbnailUrl = uploadedUrls[parsed.bestIndex || 0];
+        } else {
+          thumbnailUrl = uploadedUrls[0];
+        }
+      } catch (e) {
+        thumbnailUrl = uploadedUrls[0];
+      }
+    }
   } else {
     return { error: "Thumbnail is required." };
   }
@@ -93,6 +134,7 @@ export async function action({ request }: Route.ActionArgs) {
         title,
         slug,
         synopsis,
+        summary,
         thumbnail: thumbnailUrl,
         duration,
         isFeatured,
@@ -119,7 +161,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function AdminVideosNew({ loaderData }: Route.ComponentProps) {
-  const { categories } = loaderData;
+  const { categories, hasAiTagging } = loaderData;
   const actionData = useActionData<{ error?: string }>();
   const navigation = useNavigation();
   const submit = useSubmit();
@@ -128,8 +170,103 @@ export default function AdminVideosNew({ loaderData }: Route.ComponentProps) {
   const [isModerating, setIsModerating] = useState(false);
   const [moderationWarning, setModerationWarning] = useState<string | null>(null);
 
+  // AI Tagging State
+  const [isSuggesting, setIsSuggesting] = useState(false);
+  const [suggestedTags, setSuggestedTags] = useState<string[]>([]);
+  const [suggestedCategories, setSuggestedCategories] = useState<string[]>([]);
+  const [currentTags, setCurrentTags] = useState("");
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<Set<string>>(new Set());
+  const [titleValue, setTitleValue] = useState("");
+  const [synopsisValue, setSynopsisValue] = useState("");
+  const [summaryValue, setSummaryValue] = useState("");
+  const [isSummarizing, setIsSummarizing] = useState(false);
+  const [hasWatermark, setHasWatermark] = useState(false);
+
+  const handleSuggestTags = async () => {
+    if (!titleValue) return alert("Please enter a title first");
+    
+    setIsSuggesting(true);
+    try {
+      const res = await fetch("/api/suggest-tags", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: titleValue, description: synopsisValue }),
+      });
+      
+      const data = await res.json();
+      if (data.error) {
+        alert("AI Error: " + data.error);
+      } else {
+        setSuggestedTags(data.tags || []);
+        setSuggestedCategories(data.categories || []);
+      }
+    } catch (e) {
+      alert("Failed to reach AI service.");
+    } finally {
+      setIsSuggesting(false);
+    }
+  };
+
+  const handleAddTag = (tag: string) => {
+    if (!currentTags) {
+      setCurrentTags(tag);
+    } else if (!currentTags.split(",").map(t => t.trim().toLowerCase()).includes(tag.toLowerCase())) {
+      setCurrentTags(currentTags + `, ${tag}`);
+    }
+    setSuggestedTags(suggestedTags.filter(t => t !== tag));
+  };
+
+  const handleAddCategory = (catName: string) => {
+    // Find matching category (case-insensitive)
+    const match = categories.find((c: any) => c.name.toLowerCase() === catName.toLowerCase());
+    if (match) {
+      const newSet = new Set(selectedCategoryIds);
+      newSet.add(match.id);
+      setSelectedCategoryIds(newSet);
+    } else {
+      alert(`Category "${catName}" not found in database. Please create it first.`);
+    }
+    setSuggestedCategories(suggestedCategories.filter(c => c !== catName));
+  };
+
+  const handleCategoryChange = (catId: string, checked: boolean) => {
+    const newSet = new Set(selectedCategoryIds);
+    if (checked) newSet.add(catId);
+    else newSet.delete(catId);
+    setSelectedCategoryIds(newSet);
+  };
+
+  const handleGenerateSummary = async () => {
+    if (!titleValue || !synopsisValue) return alert("Please enter title and synopsis first");
+    
+    setIsSummarizing(true);
+    try {
+      const res = await fetch("/api/suggest-summary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: titleValue, description: synopsisValue }),
+      });
+      
+      const data = await res.json();
+      if (data.error) {
+        alert("AI Error: " + data.error);
+      } else {
+        setSummaryValue(data.summary || "");
+      }
+    } catch (e) {
+      alert("Failed to reach AI service.");
+    } finally {
+      setIsSummarizing(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!hasWatermark) {
+      alert("Pastikan Anda sudah menambahkan watermark statis ke video ini.");
+      return;
+    }
+    
     setIsModerating(true);
     setModerationWarning(null);
 
@@ -208,6 +345,8 @@ export default function AdminVideosNew({ loaderData }: Route.ComponentProps) {
               <Input
                 id="title"
                 name="title"
+                value={titleValue}
+                onChange={(e) => setTitleValue(e.target.value)}
                 required
                 className="bg-night-card border-night-border mt-1"
               />
@@ -224,12 +363,13 @@ export default function AdminVideosNew({ loaderData }: Route.ComponentProps) {
             </div>
 
             <div>
-              <Label htmlFor="thumbnail">Thumbnail File</Label>
+              <Label htmlFor="thumbnail">Thumbnail Files (Upload up to 5 candidates for AI selection)</Label>
               <Input
                 id="thumbnail"
                 name="thumbnail"
                 type="file"
                 accept="image/*"
+                multiple
                 required
                 className="bg-night-card border-night-border mt-1 file:text-night-cyan"
               />
@@ -240,6 +380,8 @@ export default function AdminVideosNew({ loaderData }: Route.ComponentProps) {
               <Textarea
                 id="synopsis"
                 name="synopsis"
+                value={synopsisValue}
+                onChange={(e) => setSynopsisValue(e.target.value)}
                 required
                 rows={4}
                 className="bg-night-card border-night-border mt-1"
@@ -247,13 +389,76 @@ export default function AdminVideosNew({ loaderData }: Route.ComponentProps) {
             </div>
 
             <div>
-              <Label htmlFor="tags">Tags (Comma separated)</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="summary">AI Summary (Optional)</Label>
+                {hasAiTagging && (
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={handleGenerateSummary}
+                    disabled={isSummarizing}
+                    className="h-6 px-2 text-night-accent hover:text-white hover:bg-night-accent text-xs"
+                  >
+                    {isSummarizing ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Sparkles className="w-3 h-3 mr-1" />}
+                    Generate Summary
+                  </Button>
+                )}
+              </div>
+              <Textarea
+                id="summary"
+                name="summary"
+                value={summaryValue}
+                onChange={(e) => setSummaryValue(e.target.value)}
+                rows={2}
+                className="bg-night-card border-night-border mt-1"
+              />
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="tags">Tags (Comma separated)</Label>
+                {hasAiTagging && (
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={handleSuggestTags}
+                    disabled={isSuggesting}
+                    className="h-6 px-2 text-night-accent hover:text-white hover:bg-night-accent text-xs"
+                  >
+                    {isSuggesting ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Sparkles className="w-3 h-3 mr-1" />}
+                    Suggest Tags
+                  </Button>
+                )}
+              </div>
               <Input
                 id="tags"
                 name="tags"
+                value={currentTags}
+                onChange={(e) => setCurrentTags(e.target.value)}
                 placeholder="action, romance, mature"
                 className="bg-night-card border-night-border mt-1"
               />
+              
+              {/* AI Tag Suggestions */}
+              {suggestedTags.length > 0 && (
+                <div className="mt-3 space-y-2">
+                  <p className="text-xs text-night-muted">AI Tag Suggestions (Click to add):</p>
+                  <div className="flex flex-wrap gap-2">
+                    {suggestedTags.map(tag => (
+                      <Badge 
+                        key={tag} 
+                        variant="secondary" 
+                        className="cursor-pointer bg-night-hover text-night-cyan hover:bg-night-cyan hover:text-night-bg transition-colors"
+                        onClick={() => handleAddTag(tag)}
+                      >
+                        + {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -321,6 +526,8 @@ export default function AdminVideosNew({ loaderData }: Route.ComponentProps) {
                       id={`cat-${cat.id}`}
                       name="categoryIds"
                       value={cat.id}
+                      checked={selectedCategoryIds.has(cat.id)}
+                      onCheckedChange={(checked) => handleCategoryChange(cat.id, checked as boolean)}
                     />
                     <Label
                       htmlFor={`cat-${cat.id}`}
@@ -336,8 +543,38 @@ export default function AdminVideosNew({ loaderData }: Route.ComponentProps) {
                   </span>
                 )}
               </div>
+              
+              {/* AI Category Suggestions */}
+              {suggestedCategories.length > 0 && (
+                <div className="mt-3 space-y-2">
+                  <p className="text-xs text-night-muted">AI Category Suggestions:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {suggestedCategories.map(cat => (
+                      <Badge 
+                        key={cat} 
+                        variant="secondary" 
+                        className="cursor-pointer bg-night-hover text-night-accent hover:bg-night-accent hover:text-white transition-colors"
+                        onClick={() => handleAddCategory(cat)}
+                      >
+                        + {cat}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
+        </div>
+
+        <div className="pt-4 border-t border-night-border flex items-center space-x-2">
+          <Checkbox 
+            id="watermark" 
+            checked={hasWatermark}
+            onCheckedChange={(c) => setHasWatermark(!!c)} 
+          />
+          <Label htmlFor="watermark" className="text-red-400 font-bold">
+            Saya sudah menambahkan watermark (logo Auiso) secara statis ke video ini
+          </Label>
         </div>
 
         <Button

@@ -5,7 +5,6 @@ import { prisma } from "../lib/db.server";
 import { getUser } from "../lib/auth.server";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
-import { Calendar, Eye, Film, Play } from "lucide-react";
 import { Player4Me } from "../components/players/Player4Me";
 import { Filemoon } from "../components/players/Filemoon";
 import { Doodstream } from "../components/players/Doodstream";
@@ -27,9 +26,14 @@ import { SmartSynopsis } from "../components/SmartSynopsis";
 import { externalApi } from "../lib/axios.server";
 import { AdDisplay } from "../components/ads/AdDisplay";
 import { OptimizedImage } from "../components/OptimizedImage";
+import { Calendar, Film, Eye, AlertTriangle } from "lucide-react";
+import { useTranslation } from "~/context/I18nContext";
+import { getLocale } from "../lib/i18n.server";
+import { checkRateLimit } from "../lib/rate-limit.server";
 import { cachedQuery } from "../lib/redis.server";
-
-import { getDictionary } from "../lib/i18n.server";
+import { PiPButton } from "../components/PiPButton";
+import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
+import { ReportButton } from "../components/ReportButton";
 
 export const meta = ({ data }: Route.MetaArgs) => {
   if (!data?.video) {
@@ -72,23 +76,56 @@ export async function loader({ params, request }: Route.LoaderArgs) {
   const { slug } = params;
   const authUser = await getUser(request);
   const userId = authUser?.id;
-  const { dict, locale } = getDictionary(request);
+  const locale = await getLocale(request);
   const url = request.url;
 
-  // Increment views and fetch data
-  const video = await prisma.video.update({
-    where: { slug },
-    data: { views: { increment: 1 } },
-    include: {
-      tags: { include: { tag: true } },
-      categories: { include: { category: true } },
-      comments: {
-        orderBy: { createdAt: "desc" },
-        include: { user: { select: { id: true, username: true } } },
-      },
-      _count: { select: { likes: true } },
+  // Identify user or IP for view count rate limiting
+  const viewerIdentifier =
+    userId ||
+    request.headers.get("x-forwarded-for") ||
+    request.headers.get("x-real-ip") ||
+    "unknown";
+
+  // Rate limit: 1 view per video per IP/User per 5 minutes
+  const limitStatus = checkRateLimit(
+    `view:${viewerIdentifier}:${slug}`,
+    1,
+    5 * 60 * 1000,
+  );
+
+  // Base include query
+  const videoInclude = {
+    tags: { include: { tag: true } },
+    categories: { include: { category: true } },
+    comments: {
+      orderBy: { createdAt: "desc" as const },
+      include: { user: { select: { id: true, username: true } } },
     },
-  });
+    _count: { select: { likes: true } },
+  };
+
+  const getUniqueVideo = () =>
+    prisma.video.findUnique({
+      where: { slug },
+      include: videoInclude,
+    });
+
+  let video: Awaited<ReturnType<typeof getUniqueVideo>>;
+
+  if (limitStatus.success) {
+    // Increment views and fetch data
+    video = await (prisma as any).video.update({
+      where: { slug },
+      data: { views: { increment: 1 } },
+      include: videoInclude,
+    });
+  } else {
+    // Just fetch data without incrementing views
+    video = await (prisma as any).video.findUnique({
+      where: { slug },
+      include: videoInclude,
+    });
+  }
 
   if (!video) throw new Response("Not Found", { status: 404 });
 
@@ -127,12 +164,18 @@ export async function loader({ params, request }: Route.LoaderArgs) {
   // Fetch all tags and categories for aggressive internal linking in synopsis
   const [allTags, allCategories] = await Promise.all([
     cachedQuery("video:tags", 120, () =>
-      // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
-      prisma.tag.findMany({ select: { name: true }, cacheStrategy: { swr: 60, ttl: 60 } })
+      prisma.tag.findMany({
+        select: { name: true },
+        // @ts-ignore - cacheStrategy is added by Prisma Accelerate
+        cacheStrategy: { swr: 60, ttl: 60 },
+      }),
     ),
     cachedQuery("video:categories", 120, () =>
-      // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
-      prisma.category.findMany({ select: { name: true }, cacheStrategy: { swr: 60, ttl: 60 } })
+      prisma.category.findMany({
+        select: { name: true },
+        // @ts-ignore - cacheStrategy is added by Prisma Accelerate
+        cacheStrategy: { swr: 60, ttl: 60 },
+      }),
     ),
   ]);
 
@@ -154,22 +197,27 @@ export async function loader({ params, request }: Route.LoaderArgs) {
   }
 
   const categoryIds = video.categories.map((c) => c.categoryId);
-  const relatedVideos = await cachedQuery(`related:${video.id}`, 120, () =>
-    prisma.video.findMany({
-      where: {
-        AND: [
-          { id: { not: video.id } },
-          categoryIds.length > 0
-            ? { categories: { some: { categoryId: { in: categoryIds } } } }
-            : {},
-        ],
-      },
-      take: 10,
-      orderBy: { views: "desc" },
-      include: { tags: { include: { tag: true } } },
-      // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
-      cacheStrategy: { swr: 60, ttl: 60 },
-    })
+  const currentVideoId = video.id;
+
+  const relatedVideos = await cachedQuery(
+    `related:${currentVideoId}`,
+    120,
+    () =>
+      prisma.video.findMany({
+        where: {
+          AND: [
+            { id: { not: currentVideoId } },
+            categoryIds.length > 0
+              ? { categories: { some: { categoryId: { in: categoryIds } } } }
+              : {},
+          ],
+        },
+        take: 10,
+        orderBy: { views: "desc" },
+        include: { tags: { include: { tag: true } } },
+        // @ts-ignore - cacheStrategy is added by Prisma Accelerate
+        cacheStrategy: { swr: 60, ttl: 60 },
+      }),
   );
 
   return {
@@ -179,7 +227,6 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     isBookmarked,
     isLoggedIn: !!userId,
     videoMeta,
-    dict,
     locale,
     url,
     allTagNames: allTags.map((t) => t.name),
@@ -195,12 +242,13 @@ export default function AnimeDetail() {
     isBookmarked,
     isLoggedIn,
     videoMeta,
-    dict,
     locale,
     url,
     allTagNames,
     allCategoryNames,
   } = useLoaderData<typeof loader>();
+
+  const { t } = useTranslation();
 
   const formatDuration = (minutes?: number | null) => {
     if (!minutes) return undefined;
@@ -225,6 +273,8 @@ export default function AnimeDetail() {
       });
     }
   }, [video.id]);
+
+  useKeyboardShortcuts();
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -254,12 +304,30 @@ export default function AnimeDetail() {
       />
 
       <div className="container mx-auto px-4 md:px-6 lg:px-8 py-8">
+        {/* Anti-Piracy Warning */}
+        <div className="bg-red-950/50 border border-red-500/50 text-red-200 px-4 py-2 rounded-lg mb-4 flex items-center justify-center text-sm font-medium">
+          <AlertTriangle className="w-5 h-5 mr-2 shrink-0" />
+          <span>Dilarang merekam atau mendistribusikan ulang konten ini. Pelanggaran hak cipta akan ditindak tegas.</span>
+        </div>
+
         {/* Video Player Section (Top) */}
-        <div className="mb-8 w-full aspect-video bg-black rounded-xl overflow-hidden border border-night-border shadow-2xl relative">
+        <div id="player-container" className="mb-8 w-full aspect-video bg-black rounded-xl overflow-hidden border border-night-border shadow-2xl relative" onContextMenu={(e) => e.preventDefault()}>
           {/* Priority 1: FallbackPlayer with multiple sources */}
-          {(video as any).videoSources && Array.isArray((video as any).videoSources) && ((video as any).videoSources as Array<{platform: string; videoId: string}>).length > 0 ? (
+          {(video as any).videoSources &&
+          Array.isArray((video as any).videoSources) &&
+          (
+            (video as any).videoSources as Array<{
+              platform: string;
+              videoId: string;
+            }>
+          ).length > 0 ? (
             <FallbackPlayer
-              sources={(video as any).videoSources as Array<{platform: string; videoId: string}>}
+              sources={
+                (video as any).videoSources as Array<{
+                  platform: string;
+                  videoId: string;
+                }>
+              }
               title={video.title}
             />
           ) : video.peerTubeId || video.externalSourceUrl ? (
@@ -282,7 +350,7 @@ export default function AnimeDetail() {
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center bg-night-bg text-night-muted">
               <Film className="w-16 h-16 mb-4 opacity-50" />
-              <p className="text-xl font-medium">Video not available</p>
+              <p className="text-xl font-medium">{t("video.notAvailable")}</p>
             </div>
           )}
         </div>
@@ -329,6 +397,8 @@ export default function AnimeDetail() {
                     videoId={video.id}
                     initialBookmarked={isBookmarked}
                   />
+                  <ReportButton targetId={video.id} type="video" />
+                  <PiPButton targetId="player-container" />
                 </div>
               )}
             </div>
@@ -345,13 +415,19 @@ export default function AnimeDetail() {
               <div className="flex items-center gap-2">
                 <Eye className="w-5 h-5 text-night-cyan" />
                 <span>
-                  {video.views.toLocaleString("id-ID")} {dict.views}
+                  {video.views.toLocaleString("id-ID")} {t("video.viewsLabel")}
                 </span>
               </div>
             </div>
 
-            <div className="mb-6 flex-grow">
-              <h3 className="text-xl font-bold mb-3">{dict.synopsis}</h3>
+            <div className="mb-6 flex-grow select-none">
+              <h3 className="text-xl font-bold mb-3">{t("video.synopsis")}</h3>
+              {(video as any).summary && (
+                <div className="mb-4 p-4 bg-night-bg rounded-lg border border-night-border">
+                  <h4 className="text-sm font-bold text-night-accent mb-2">AI Summary</h4>
+                  <p className="text-night-text text-sm italic">{(video as any).summary}</p>
+                </div>
+              )}
               <p className="text-night-muted leading-relaxed whitespace-pre-wrap text-base md:text-lg">
                 <SmartSynopsis
                   synopsis={video.synopsis}
@@ -362,7 +438,7 @@ export default function AnimeDetail() {
             </div>
 
             <div className="mt-auto pt-6 border-t border-night-border">
-              <h3 className="text-lg font-bold mb-3">{dict.tags}</h3>
+              <h3 className="text-lg font-bold mb-3">{t("video.tags")}</h3>
               <div className="flex flex-wrap gap-2">
                 {video.tags.map((t) => (
                   <Badge
@@ -394,7 +470,7 @@ export default function AnimeDetail() {
         {relatedVideos.length > 0 && (
           <div className="mt-16">
             <h2 className="text-2xl font-serif font-bold mb-6 pl-4 border-l-4 border-night-accent">
-              {dict.relatedAnime}
+              {t("video.related")}
             </h2>
             <Carousel
               opts={{

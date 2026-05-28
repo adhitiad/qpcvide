@@ -4,6 +4,7 @@ import { VideoCard } from "../components/VideoCard";
 import { useLoaderData, useSearchParams } from "react-router";
 import { useInfiniteScroll } from "../hooks/use-infinite-scroll";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "~/context/I18nContext";
 
 export const meta = ({ location }: Route.MetaArgs) => {
   const q = new URLSearchParams(location.search).get("q") || "";
@@ -47,6 +48,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function SearchPage() {
+  const { t } = useTranslation();
   const { videos: initialVideos, total, page: initialPage, totalPages, q } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
 
@@ -61,10 +63,10 @@ export default function SearchPage() {
     <main className="container mx-auto px-4 py-8 min-h-[80vh]">
       <div className="mb-8 border-b border-night-border pb-4">
         <h1 className="text-3xl md:text-4xl font-serif font-bold text-white mb-2">
-          Search Results for <span className="text-night-accent">"{q}"</span>
+          {t("search.resultsFor")} <span className="text-night-accent">"{q}"</span>
         </h1>
         <p className="text-night-muted">
-          Found {total} {total === 1 ? "video" : "videos"} matching your query.
+          {t("search.found", { count: total })}
         </p>
       </div>
 
@@ -85,8 +87,8 @@ export default function SearchPage() {
         </>
       ) : (
         <div className="text-center py-20 bg-night-card rounded-xl border border-night-border">
-          <h3 className="text-xl text-night-muted">No results found</h3>
-          <p className="text-night-muted/60 mt-2">Try adjusting your search query.</p>
+          <h3 className="text-xl text-night-muted">{t("search.noResults")}</h3>
+          <p className="text-night-muted/60 mt-2">{t("search.adjustQuery")}</p>
         </div>
       )}
     </main>

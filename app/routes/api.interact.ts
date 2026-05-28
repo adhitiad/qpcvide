@@ -2,6 +2,7 @@ import type { Route } from "./+types/api.interact";
 import { data } from "react-router";
 import { prisma } from "../lib/db.server";
 import { requireUserId } from "../lib/auth.server";
+import { checkRateLimit } from "../lib/rate-limit.server";
 
 export async function action({ request }: Route.ActionArgs) {
   const userId = await requireUserId(request);
@@ -12,6 +13,12 @@ export async function action({ request }: Route.ActionArgs) {
 
   if (!videoId || typeof videoId !== "string") {
     return data({ error: "Invalid videoId" }, { status: 400 });
+  }
+
+  // Rate Limiting: 30 interactions per minute per user
+  const limitStatus = checkRateLimit(`interact:${userId}`, 30, 60 * 1000);
+  if (!limitStatus.success) {
+    return data({ error: "Rate limit exceeded. Please try again later." }, { status: 429 });
   }
 
   if (type === "like") {
