@@ -2,9 +2,10 @@ interface Player4MeProps {
   videoId: string;
   title?: string;
   className?: string;
+  onError?: () => void;
 }
 
-export function Player4Me({ videoId, title, className }: Player4MeProps) {
+export function Player4Me({ videoId, title, className, onError }: Player4MeProps) {
   return (
     <div className={`relative aspect-video rounded-lg bg-night-card overflow-hidden border border-night-border ${className ?? ""}`}>
       <iframe
@@ -14,6 +15,7 @@ export function Player4Me({ videoId, title, className }: Player4MeProps) {
         allowFullScreen
         sandbox="allow-same-origin allow-scripts allow-popups"
         referrerPolicy="no-referrer"
+        onError={onError}
       />
     </div>
   );

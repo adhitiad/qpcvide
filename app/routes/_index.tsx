@@ -9,6 +9,7 @@ import { AdDisplay } from "../components/ads/AdDisplay";
 import { Prisma } from "@prisma/client";
 import { useInfiniteScroll } from "../hooks/use-infinite-scroll";
 import { Loader2 } from "lucide-react";
+import { cachedQuery } from "../lib/redis.server";
 
 export const meta = () => {
   return [
@@ -56,20 +57,25 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   // Fetch data that must block rendering (Hero carousel & filters)
   const [tags, categories, featured] = await Promise.all([
-    // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
-    prisma.tag.findMany({ orderBy: { name: "asc" }, cacheStrategy: { swr: 60, ttl: 60 } }),
-    // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
-    prisma.category.findMany({ orderBy: { name: "asc" }, cacheStrategy: { swr: 60, ttl: 60 } }),
-    // Fetch 5 most viewed as featured for hero carousel
-    prisma.video.findMany({
-      orderBy: { views: "desc" },
-      take: 5,
-      include: {
-        categories: { include: { category: true } },
-      },
+    cachedQuery("home:tags", 120, () =>
       // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
-      cacheStrategy: { swr: 60, ttl: 60 },
-    }),
+      prisma.tag.findMany({ orderBy: { name: "asc" }, cacheStrategy: { swr: 60, ttl: 60 } })
+    ),
+    cachedQuery("home:categories", 120, () =>
+      // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
+      prisma.category.findMany({ orderBy: { name: "asc" }, cacheStrategy: { swr: 60, ttl: 60 } })
+    ),
+    cachedQuery("home:featured", 120, () =>
+      prisma.video.findMany({
+        orderBy: { views: "desc" },
+        take: 5,
+        include: {
+          categories: { include: { category: true } },
+        },
+        // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
+        cacheStrategy: { swr: 60, ttl: 60 },
+      })
+    ),
   ]);
 
   // Defer the heavy list queries

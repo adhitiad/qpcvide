@@ -6,6 +6,7 @@ import { FilterBar } from "../components/FilterBar";
 import { Prisma } from "@prisma/client";
 import { useInfiniteScroll } from "../hooks/use-infinite-scroll";
 import { Loader2 } from "lucide-react";
+import { cachedQuery } from "../lib/redis.server";
 
 export const meta = ({ data }: Route.MetaArgs) => {
   if (!data?.category) {
@@ -65,19 +66,26 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     orderBy = { releaseDate: "desc" };
   }
 
-  // Fetch data
+  // Fetch data with caching
+  const cacheKey = `cat:${slug}:p${page}:s${sort}:t${tag || "all"}`;
   const [videos, totalVideos, tags] = await Promise.all([
-    prisma.video.findMany({
-      where,
-      orderBy,
-      skip,
-      take: limit,
-      include: {
-        tags: { include: { tag: true } },
-      },
-    }),
-    prisma.video.count({ where }),
-    prisma.tag.findMany({ orderBy: { name: "asc" } }),
+    cachedQuery(`${cacheKey}:videos`, 60, () =>
+      prisma.video.findMany({
+        where,
+        orderBy,
+        skip,
+        take: limit,
+        include: {
+          tags: { include: { tag: true } },
+        },
+      })
+    ),
+    cachedQuery(`${cacheKey}:total`, 60, () =>
+      prisma.video.count({ where })
+    ),
+    cachedQuery("cat:tags", 120, () =>
+      prisma.tag.findMany({ orderBy: { name: "asc" } })
+    ),
   ]);
 
   return {

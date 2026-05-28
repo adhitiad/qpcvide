@@ -9,6 +9,7 @@ import { Calendar, Eye, Film, Play } from "lucide-react";
 import { Player4Me } from "../components/players/Player4Me";
 import { Filemoon } from "../components/players/Filemoon";
 import { Doodstream } from "../components/players/Doodstream";
+import { FallbackPlayer } from "../components/players/FallbackPlayer";
 import { VideoCard } from "../components/VideoCard";
 import { LikeButton } from "../components/LikeButton";
 import { BookmarkButton } from "../components/BookmarkButton";
@@ -25,6 +26,8 @@ import { VideoPlayer } from "../components/VideoPlayer";
 import { SmartSynopsis } from "../components/SmartSynopsis";
 import { externalApi } from "../lib/axios.server";
 import { AdDisplay } from "../components/ads/AdDisplay";
+import { OptimizedImage } from "../components/OptimizedImage";
+import { cachedQuery } from "../lib/redis.server";
 
 import { getDictionary } from "../lib/i18n.server";
 
@@ -123,10 +126,14 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 
   // Fetch all tags and categories for aggressive internal linking in synopsis
   const [allTags, allCategories] = await Promise.all([
-    // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
-    prisma.tag.findMany({ select: { name: true }, cacheStrategy: { swr: 60, ttl: 60 } }),
-    // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
-    prisma.category.findMany({ select: { name: true }, cacheStrategy: { swr: 60, ttl: 60 } }),
+    cachedQuery("video:tags", 120, () =>
+      // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
+      prisma.tag.findMany({ select: { name: true }, cacheStrategy: { swr: 60, ttl: 60 } })
+    ),
+    cachedQuery("video:categories", 120, () =>
+      // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
+      prisma.category.findMany({ select: { name: true }, cacheStrategy: { swr: 60, ttl: 60 } })
+    ),
   ]);
 
   // Fetch PeerTube metadata if available
@@ -147,21 +154,23 @@ export async function loader({ params, request }: Route.LoaderArgs) {
   }
 
   const categoryIds = video.categories.map((c) => c.categoryId);
-  const relatedVideos = await prisma.video.findMany({
-    where: {
-      AND: [
-        { id: { not: video.id } },
-        categoryIds.length > 0
-          ? { categories: { some: { categoryId: { in: categoryIds } } } }
-          : {},
-      ],
-    },
-    take: 10,
-    orderBy: { views: "desc" },
-    include: { tags: { include: { tag: true } } },
-    // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
-    cacheStrategy: { swr: 60, ttl: 60 },
-  });
+  const relatedVideos = await cachedQuery(`related:${video.id}`, 120, () =>
+    prisma.video.findMany({
+      where: {
+        AND: [
+          { id: { not: video.id } },
+          categoryIds.length > 0
+            ? { categories: { some: { categoryId: { in: categoryIds } } } }
+            : {},
+        ],
+      },
+      take: 10,
+      orderBy: { views: "desc" },
+      include: { tags: { include: { tag: true } } },
+      // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
+      cacheStrategy: { swr: 60, ttl: 60 },
+    })
+  );
 
   return {
     video,
@@ -247,7 +256,13 @@ export default function AnimeDetail() {
       <div className="container mx-auto px-4 md:px-6 lg:px-8 py-8">
         {/* Video Player Section (Top) */}
         <div className="mb-8 w-full aspect-video bg-black rounded-xl overflow-hidden border border-night-border shadow-2xl relative">
-          {video.peerTubeId || video.externalSourceUrl ? (
+          {/* Priority 1: FallbackPlayer with multiple sources */}
+          {(video as any).videoSources && Array.isArray((video as any).videoSources) && ((video as any).videoSources as Array<{platform: string; videoId: string}>).length > 0 ? (
+            <FallbackPlayer
+              sources={(video as any).videoSources as Array<{platform: string; videoId: string}>}
+              title={video.title}
+            />
+          ) : video.peerTubeId || video.externalSourceUrl ? (
             <VideoPlayer
               videoId={video.id}
               peerTubeId={video.peerTubeId}
@@ -277,10 +292,12 @@ export default function AnimeDetail() {
           {/* Thumbnail */}
           <div className="w-full lg:w-1/3 flex-shrink-0">
             <div className="relative aspect-square sm:aspect-auto lg:aspect-[3/4] rounded-xl overflow-hidden border border-night-border">
-              <img
+              <OptimizedImage
                 src={video.thumbnail}
                 alt={video.title}
                 className="w-full h-full object-cover"
+                sizes="(max-width: 1024px) 100vw, 33vw"
+                loading="eager"
               />
             </div>
           </div>

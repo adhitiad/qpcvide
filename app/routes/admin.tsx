@@ -10,7 +10,8 @@ import {
   Megaphone,
   LogOut,
   DollarSign,
-  ShieldAlert
+  ShieldAlert,
+  BarChart3
 } from "lucide-react";
 
 export const meta = () => {
@@ -29,6 +30,7 @@ export default function AdminLayout() {
 
   const navigation = [
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+    { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
     { name: "Video", href: "/admin/video", icon: Film },
     { name: "Tags", href: "/admin/tags", icon: Tags },
     { name: "Categories", href: "/admin/categories", icon: FolderTree },

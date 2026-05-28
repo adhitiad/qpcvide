@@ -11,6 +11,7 @@ import {
 } from "./ui/carousel";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
+import { OptimizedImage } from "./OptimizedImage";
 
 import { CategoryBadge } from "./CategoryBadge";
 
@@ -46,12 +47,13 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
           <CarouselItem key={video.id}>
             <div className="relative aspect-[21/9] sm:aspect-[16/9] md:aspect-[21/9] overflow-hidden">
               <div className="absolute inset-0">
-                <img
+                <OptimizedImage
                   src={video.thumbnail}
                   alt={video.title}
                   className="w-full h-full object-cover"
                   fetchPriority={index === 0 ? "high" : "auto"}
                   loading={index === 0 ? "eager" : "lazy"}
+                  sizes="100vw"
                 />
               </div>
               <div className="absolute inset-0 bg-gradient-to-t from-night-bg via-night-bg/50 to-transparent flex flex-col justify-end p-6 md:p-12">

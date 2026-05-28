@@ -45,6 +45,7 @@ model Video {
   externalSourceUrl String?
   videoPlatform     String? // "player4me" | "filemoon" | "doodstream"
   videoId           String?
+  videoSources      Json?   // [{ "platform": "player4me", "videoId": "xxx" }, ...]
   isLive            Boolean  @default(false)
   releaseDate       DateTime
   views             Int      @default(0)

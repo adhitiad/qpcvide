@@ -3,6 +3,7 @@ import { Eye, Clock, Star } from "lucide-react";
 import { Card, CardContent } from "./ui/card";
 import { CategoryBadge } from "./CategoryBadge";
 import { Badge } from "./ui/badge";
+import { OptimizedImage } from "./OptimizedImage";
 
 interface VideoCardProps {
   video: {
@@ -33,11 +34,12 @@ export function VideoCard({ video }: VideoCardProps) {
           </div>
         )}
         <div className="relative aspect-video overflow-hidden bg-black/50">
-          <img
+          <OptimizedImage
             src={video.thumbnail}
             alt={video.title}
             loading="lazy"
             decoding="async"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
           <div className="absolute top-2 left-2 bg-black/70 px-2 py-1 rounded text-xs font-semibold text-night-text flex items-center gap-1 backdrop-blur-sm">
