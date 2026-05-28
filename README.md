@@ -1,74 +1,138 @@
 # Auiso Video Platform
 
-Auiso is a highly optimized, modern, full-stack video platform designed for extreme user retention, high SEO performance, and advanced AI integration.
+Auiso adalah platform video full-stack berbasis React Router 7 yang fokus pada pengalaman menonton, SEO, monetisasi, moderasi, dan fitur real-time.
 
-## 🚀 Tech Stack
+## Tech Stack
 
-- **Runtime & Package Manager:** Bun
-- **Framework:** Remix + React Router v7
-- **Database ORM:** Prisma (SQLite for dev, PostgreSQL ready for prod)
-- **Styling:** Tailwind CSS v4 + shadcn/ui
-- **Icons:** Lucide React
+- Runtime dan package manager: Bun 1.3+
+- Framework: React Router 7 Framework Mode, Vite, React 19
+- Database: Prisma, SQLite untuk development, PostgreSQL/Prisma Accelerate untuk production
+- Styling: Tailwind CSS v4 dan shadcn/ui
+- Realtime: Supabase Realtime
+- Integrasi backend: ConnectRPC/gRPC client, API route React Router, Axios untuk API eksternal
+- Deployment: Vercel dengan `@vercel/react-router`
+- Testing: Vitest
 
-## 🌟 Key Features
+## Fitur Utama
 
-### 🤖 AI Ecosystem
-- **Semantic Search:** Deep content discovery powered by Exa API, bridging natural language concepts to internal video content via query expansion.
-- **Interactive AI Chat (18+):** Built-in companion chat powered by Unit Host AI (iframe), with backend proxy readiness for local *Self: After Dark* models via SillyTavern.
-- **Auto-Moderation:** Automated NSFW/safety screening for uploaded content using Llama Guard API via Groq.
+- Katalog video dengan home feed, kategori, pencarian, rekomendasi, history, bookmark, like, dan komentar.
+- SEO dinamis melalui meta route, `sitemap.xml`, `robots.txt`, dan Schema.org `VideoObject`.
+- SmartSynopsis untuk internal linking otomatis dari deskripsi video.
+- Admin panel untuk video, kategori, tag, komentar, moderasi, ads, revenue, dan block status.
+- Monetisasi melalui Google Ads, Facebook Pixel, direct ads, dan checkout campaign.
+- Moderasi konten dengan Groq/Llama Guard jika `GROQ_API_KEY` tersedia.
+- Integrasi Supabase untuk storage, auth helper, dan realtime comment/player events.
+- Age verification, session cookie, RBAC, dan route protection.
 
-### 📈 Retention & SEO Strategies
-- **SmartSynopsis:** Aggressively converts overlapping keywords in video descriptions into hyperlinked anchor texts, driving internal circulation and SEO indexing.
-- **Infinite Scroll:** Seamless `react-intersection-observer` pagination on the Home, Category, and Search pages for binge-browsing.
-- **Lazy Loading:** All high-resolution video thumbnails load on-demand.
-- **Search Referrer Tracking:** Captures external search terms (from Google, Bing, etc.) via document.referrer and custom fingerprinting to personalize the recommendation engine.
-- **Dynamic SEO:** Fully automated `sitemap.xml`, unique meta tags per video, and injected Schema.org `VideoObject` structured data.
+## Prasyarat
 
-### 💰 Monetization & Admin
-- **Ad Revenue Dashboard:** Integrated Looker Studio reporting (GA4 + AdSense) and internal direct-ad tracking embedded right into the Admin Panel.
-- **Block Monitoring:** Real-time domain block tracking utilizing OONI data to ensure global accessibility.
-- **Role-Based Access (RBAC):** Distinct `user`, `premium`, and `admin` roles, enforcing an iron-clad 18+ Age Verification gateway.
+- Bun 1.3 atau lebih baru
+- Database lokal atau remote yang kompatibel dengan Prisma
+- Akun Supabase jika ingin memakai storage dan realtime
+- Environment variable production di Vercel
 
-## 🛠️ Getting Started
-
-### Installation
-Ensure you have [Bun](https://bun.sh/) installed.
+## Instalasi
 
 ```bash
 bun install
 ```
 
-### Database Setup
-Initialize your Prisma database:
+## Environment Variables
+
+Buat file `.env` di root project untuk development lokal.
+
+```env
+DATABASE_URL="file:./dev.db"
+SESSION_SECRET="change-this-secret"
+
+SUPABASE_URL="https://your-project.supabase.co"
+SUPABASE_ANON_KEY="your-supabase-anon-key"
+SUPABASE_SERVICE_ROLE_KEY="your-supabase-service-role-key"
+
+EXA_API_KEY="your-exa-api-key"
+GROQ_API_KEY="your-groq-api-key"
+SILLY_TAVERN_API_URL="http://127.0.0.1:5000/v1/chat/completions"
+SILLY_TAVERN_API_KEY=""
+
+GOOGLE_ADS_CLIENT_ID="your-adsense-client-id"
+FB_ADS_PIXEL_ID="your-facebook-pixel-id"
+GA_MEASUREMENT_ID="your-ga4-measurement-id"
+LOOKER_STUDIO_EMBED_URL="https://lookerstudio.google.com/embed/..."
+
+VOD_API_URL="https://api.example.com"
+PEERTUBE_API_URL="https://peertube2.cpy.re"
+DOODSTREAM_API_KEY="your-doodstream-api-key"
+MONITORING_DOMAIN="auiso.tv"
+CRON_SECRET="change-this-cron-secret"
+```
+
+Beberapa integrasi bersifat opsional. Jika key tidak tersedia, fitur terkait akan fallback, nonaktif, atau memakai default lokal sesuai implementasi route/server.
+
+## Database
+
+Sinkronkan schema dan generate Prisma Client:
 
 ```bash
 bunx prisma db push
 bunx prisma generate
 ```
 
-### Environment Variables
-Create a `.env` file at the root:
+Seed database jika diperlukan:
 
-```env
-DATABASE_URL="file:./dev.db"
-SESSION_SECRET="your-super-secret"
-EXA_API_KEY="your-exa-api-key"
-GOOGLE_ADS_CLIENT_ID="your-adsense-id"
-FB_ADS_PIXEL_ID="your-pixel-id"
-SILLY_TAVERN_API_URL="http://127.0.0.1:5000/v1/chat/completions"
-# ...other variables
+```bash
+bun run prisma/seed.ts
 ```
 
-### Development
-Start the development server:
+## Development
+
+Jalankan aplikasi lokal:
 
 ```bash
 bun run dev
 ```
-Your application will be available at `http://localhost:5173`.
 
-## 🎨 Theme "Anime Night"
-The platform strictly adheres to the custom "Anime Night" aesthetic: Deep dark backgrounds (`slate-950`), vibrant violet (`violet-600`) and cyan (`cyan-500`) accents, and glowing card hover effects.
+Server berjalan di:
 
----
-*Built by the Auiso Team.*
+```text
+http://localhost:5173
+```
+
+Script `dev` hanya menjalankan `react-router dev`. WebSocket/gRPC tidak lagi dijalankan sebagai proses terpisah agar tidak bentrok port saat development atau deploy.
+
+## Build dan Validasi
+
+```bash
+bun run typecheck
+bun run test
+bun run build
+```
+
+Build production memakai React Router build dan preset Vercel dari `react-router.config.ts`.
+
+## Deployment ke Vercel
+
+Project ini sudah memakai package `@vercel/react-router` dan preset:
+
+```ts
+presets: [vercelPreset()]
+```
+
+Konfigurasi ini membuat output build siap dipakai Vercel tanpa server WebSocket/gRPC tambahan. Pastikan semua environment variable production diatur di dashboard Vercel sebelum deploy.
+
+## Struktur Penting
+
+- `app/routes`: route halaman dan API
+- `app/components`: komponen UI dan fitur client
+- `app/lib`: helper server/client, auth, database, Supabase, moderation, recommender
+- `app/components/ui`: komponen shadcn/ui
+- `prisma`: schema dan seed database
+- `proto`: definisi protobuf/gRPC
+- `react-router.config.ts`: konfigurasi React Router dan Vercel preset
+- `vite.config.ts`: konfigurasi Vite, Tailwind, dan React Router plugin
+
+## Catatan Operasional
+
+- Gunakan Bun untuk install, run, test, dan build.
+- Gunakan Prisma untuk akses database dari loader/action.
+- Gunakan Supabase Realtime untuk fitur live comment/player event.
+- Jangan menjalankan server `ws` atau `grpc` terpisah dari script `dev` kecuali benar-benar sedang menguji service eksternal secara manual.
