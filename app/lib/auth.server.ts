@@ -4,15 +4,22 @@ import { prisma } from "./db.server";
 import { ageVerificationStorage } from "./cookie.server";
 
 export async function requireAgeVerification(request: Request) {
-  const session = await ageVerificationStorage.getSession(request.headers.get("Cookie"));
+  const session = await ageVerificationStorage.getSession(
+    request.headers.get("Cookie"),
+  );
   if (session.get("age_verified") !== true) {
     throw redirect("/");
   }
 }
 
-export async function signUp(email: string, password: string, username: string, request: Request) {
+export async function signUp(
+  email: string,
+  password: string,
+  username: string,
+  request: Request,
+) {
   const { supabase, headers } = getSupabaseClient(request);
-  
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -30,7 +37,7 @@ export async function signUp(email: string, password: string, username: string, 
           id: data.user.id,
           email,
           username,
-        }
+        },
       });
     } catch (e) {
       return { error: "User already exists in database." };
@@ -40,9 +47,13 @@ export async function signUp(email: string, password: string, username: string, 
   return { data, headers };
 }
 
-export async function signIn(email: string, password: string, request: Request) {
+export async function signIn(
+  email: string,
+  password: string,
+  request: Request,
+) {
   const { supabase, headers } = getSupabaseClient(request);
-  
+
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -63,18 +74,23 @@ export async function signOut(request: Request) {
 
 export async function getUser(request: Request) {
   const { supabase } = getSupabaseClient(request);
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   return user;
 }
 
-export async function requireUserId(request: Request, redirectTo: string = new URL(request.url).pathname) {
+export async function requireUserId(
+  request: Request,
+  redirectTo: string = new URL(request.url).pathname,
+) {
   const user = await getUser(request);
-  
+
   if (!user) {
     const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
     throw redirect(`/login?${searchParams}`);
   }
-  
+
   return user.id;
 }
 
@@ -95,10 +111,10 @@ export async function requireUser(request: Request) {
 
 export async function requireAdmin(request: Request) {
   const user = await requireUser(request);
-  
+
   if (user.role !== "admin") {
     throw redirect("/");
   }
-  
+
   return user;
 }
