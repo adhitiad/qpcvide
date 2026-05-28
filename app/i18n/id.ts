@@ -1,0 +1,18 @@
+export const id = {
+  views: "Tayangan",
+  releaseDate: "Tanggal Rilis",
+  relatedAnime: "Video Terkait",
+  comments: "Komentar",
+  addComment: "Tambahkan komentar...",
+  postComment: "Kirim Komentar",
+  loginToComment: "Anda harus masuk untuk memposting komentar.",
+  tags: "Label",
+  categories: "Kategori",
+  noVideoSource: "Tidak ada sumber video yang tersedia.",
+  watchExternal: "Tonton Sumber Eksternal",
+  videoExternallyHosted: "Video dihosting secara eksternal.",
+  synopsis: "Sinopsis",
+  login: "Masuk",
+  register: "Daftar",
+  searchPlaceholder: "Cari video...",
+};

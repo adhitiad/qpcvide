@@ -1,0 +1,249 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ---------------------------------------------------------
+// USERS & AUTH
+// ---------------------------------------------------------
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  role      String   @default("user") // "user", "premium", "admin"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  comments     Comment[]
+  likes        Like[]
+  bookmarks    Bookmark[]
+  watchHistory WatchHistory[]
+}
+
+// ---------------------------------------------------------
+// CONTENT (VIDEO)
+// ---------------------------------------------------------
+
+model Video {
+  id                String   @id @default(cuid())
+  title             String
+  slug              String   @unique
+  synopsis          String
+  thumbnail         String
+  duration          Int?
+  isFeatured        Boolean  @default(false)
+  peerTubeId        String?
+  externalSourceUrl String?
+  videoPlatform     String? // "player4me" | "filemoon" | "doodstream"
+  videoId           String?
+  isLive            Boolean  @default(false)
+  releaseDate       DateTime
+  views             Int      @default(0)
+  moderationStatus  String   @default("SAFE") // "SAFE", "PENDING_REVIEW", "REJECTED"
+  moderationScore   Float?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  tags            TagOnVideo[]
+  categories      CategoryOnVideo[]
+  comments        Comment[]
+  likes           Like[]
+  bookmarks       Bookmark[]
+  watchHistory    WatchHistory[]
+  userEvents      UserEvent[]
+  recommendations VideoRecommendation[]
+}
+
+// ---------------------------------------------------------
+// CATEGORIES & TAGS
+// ---------------------------------------------------------
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  videos TagOnVideo[]
+}
+
+model TagOnVideo {
+  id        String   @id @default(cuid())
+  videoId   String
+  tagId     String
+  createdAt DateTime @default(now())
+
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  tag   Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([videoId, tagId])
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  type        String // "region" | "genre" | "format"
+  description String?
+  createdAt   DateTime @default(now())
+
+  videos CategoryOnVideo[]
+}
+
+model CategoryOnVideo {
+  id         String   @id @default(cuid())
+  videoId    String
+  categoryId String
+  createdAt  DateTime @default(now())
+
+  video    Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([videoId, categoryId])
+}
+
+// ---------------------------------------------------------
+// USER INTERACTIONS
+// ---------------------------------------------------------
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  userId    String
+  videoId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  userId    String
+  videoId   String
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, videoId])
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  videoId   String
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, videoId])
+}
+
+model WatchHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  videoId   String
+  watchedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, videoId])
+}
+
+// ---------------------------------------------------------
+// RECOMMENDATIONS & FINGERPRINTING
+// ---------------------------------------------------------
+
+model UserEvent {
+  id          String   @id @default(cuid())
+  fingerprint String
+  videoId     String
+  action      String // e.g., "watch", "hover"
+  createdAt   DateTime @default(now())
+
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@index([fingerprint])
+  @@index([videoId])
+}
+
+model VideoRecommendation {
+  id          String   @id @default(cuid())
+  fingerprint String
+  videoId     String
+  score       Float
+  createdAt   DateTime @default(now())
+
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@unique([fingerprint, videoId])
+  @@index([fingerprint])
+}
+
+// ---------------------------------------------------------
+// MONETIZATION (ADS)
+// ---------------------------------------------------------
+
+model AdSlot {
+  id        String   @id @default(cuid())
+  name      String // "header", "sidebar", "between-content"
+  position  String
+  price     Float // harga per hari dalam USD
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  purchases AdPurchase[]
+}
+
+model AdPurchase {
+  id             String   @id @default(cuid())
+  slotId         String
+  advertiserName String
+  bannerUrl      String
+  targetUrl      String
+  startDate      DateTime
+  endDate        DateTime
+  impressions    Int      @default(0)
+  clicks         Int      @default(0)
+  active         Boolean  @default(true)
+  status         String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  slot AdSlot @relation(fields: [slotId], references: [id], onDelete: Cascade)
+}
+
+// ---------------------------------------------------------
+// MONITORING
+// ---------------------------------------------------------
+
+model BlockStatus {
+  id        String   @id @default(cuid())
+  country   String   @unique
+  status    String // "blocked" | "accessible"
+  checkedAt DateTime @default(now())
+}
+
+model SearchReferrer {
+  id             String   @id @default(cuid())
+  fingerprint    String
+  referrerUrl    String
+  searchEngine   String? // google, bing, yahoo, yandex
+  searchKeywords String?
+  createdAt      DateTime @default(now())
+
+  @@index([fingerprint])
+}

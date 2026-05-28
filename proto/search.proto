@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package qpcvide.search.v1;
+
+service SearchService {
+  rpc SearchAnime (SearchAnimeRequest) returns (SearchAnimeResponse);
+}
+
+message SearchAnimeRequest {
+  string query = 1;
+  int32 limit = 2;
+}
+
+message AnimeResult {
+  string id = 1;
+  string title = 2;
+  string thumbnail = 3;
+  string slug = 4;
+}
+
+message SearchAnimeResponse {
+  repeated AnimeResult results = 1;
+}

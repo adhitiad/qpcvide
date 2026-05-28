@@ -1,0 +1,18 @@
+export const ja = {
+  views: "視聴回数",
+  releaseDate: "リリース日",
+  relatedAnime: "関連アニメ",
+  comments: "コメント",
+  addComment: "コメントを追加...",
+  postComment: "コメントを投稿",
+  loginToComment: "コメントを投稿するにはログインする必要があります。",
+  tags: "タグ",
+  categories: "カテゴリー",
+  noVideoSource: "利用可能なビデオソースがありません。",
+  watchExternal: "外部ソースを見る",
+  videoExternallyHosted: "ビデオは外部でホストされています。",
+  synopsis: "あらすじ",
+  login: "ログイン",
+  register: "登録",
+  searchPlaceholder: "アニメを検索...",
+};

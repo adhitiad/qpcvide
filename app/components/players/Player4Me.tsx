@@ -1,0 +1,20 @@
+interface Player4MeProps {
+  videoId: string;
+  title?: string;
+  className?: string;
+}
+
+export function Player4Me({ videoId, title, className }: Player4MeProps) {
+  return (
+    <div className={`relative aspect-video rounded-lg bg-night-card overflow-hidden border border-night-border ${className ?? ""}`}>
+      <iframe
+        title={title ?? "Player4Me Video Player"}
+        src={`https://player4me.com/embed/${videoId}`}
+        className="absolute inset-0 w-full h-full"
+        allowFullScreen
+        sandbox="allow-same-origin allow-scripts allow-popups"
+        referrerPolicy="no-referrer"
+      />
+    </div>
+  );
+}

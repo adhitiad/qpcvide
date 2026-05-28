@@ -1,0 +1,18 @@
+export const en = {
+  views: "Views",
+  releaseDate: "Release Date",
+  relatedAnime: "Related Video",
+  comments: "Comments",
+  addComment: "Add a comment...",
+  postComment: "Post Comment",
+  loginToComment: "You must be logged in to post a comment.",
+  tags: "Tags",
+  categories: "Categories",
+  noVideoSource: "No video source available.",
+  watchExternal: "Watch External Source",
+  videoExternallyHosted: "Video is hosted externally.",
+  synopsis: "Synopsis",
+  login: "Log in",
+  register: "Register",
+  searchPlaceholder: "Search video...",
+};
