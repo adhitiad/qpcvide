@@ -34,6 +34,7 @@ export function CommentSection({ videoId, initialComments, isLoggedIn }: Comment
   // Handle Supabase Realtime
   useEffect(() => {
     const supabase = getBrowserClient();
+    if (!supabase) return; // Disable realtime if credentials missing
 
     const channel = supabase
       .channel(`comments:${videoId}`)

@@ -4,11 +4,12 @@ export const getBrowserClient = () => {
   const env = (typeof window !== "undefined" && (window as any).ENV) || {};
   
   if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) {
-    console.warn("Supabase credentials not found in window.ENV");
+    console.warn("Supabase credentials not found in window.ENV. Realtime disabled.");
+    return null;
   }
 
   return createBrowserClient(
-    env.SUPABASE_URL || "",
-    env.SUPABASE_ANON_KEY || ""
+    env.SUPABASE_URL,
+    env.SUPABASE_ANON_KEY
   );
 };

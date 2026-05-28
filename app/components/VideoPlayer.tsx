@@ -14,6 +14,7 @@ export function VideoPlayer({ videoId, peerTubeId, externalSourceUrl, initialLiv
   useEffect(() => {
     // Setup Supabase Realtime for streaming status updates
     const supabase = getBrowserClient();
+    if (!supabase) return; // Disable realtime if credentials missing
 
     const channel = supabase
       .channel(`stream:${videoId}`)
