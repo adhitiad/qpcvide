@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useRouteLoaderData,
 } from "react-router";
 
 import type { Route } from "./+types/root";
@@ -93,12 +94,20 @@ export const Layout = ({
   children: React.ReactNode;
   loaderData?: any;
 }) => {
-  const isAgeVerified = loaderData?.isAgeVerified || true;
-  const googleAdsId = loaderData?.googleAdsId;
-  const fbPixelId = loaderData?.fbPixelId;
-  const gaMeasurementId = loaderData?.gaMeasurementId;
-  const locale = loaderData?.locale || "en";
-  const dictionary = loaderData?.dictionary || {};
+  const routeLoaderData = useRouteLoaderData<typeof loader>("root");
+  const data = loaderData || routeLoaderData || {};
+  
+  const isAgeVerified = data?.isAgeVerified ?? true;
+  const googleAdsId = data?.googleAdsId;
+  const fbPixelId = data?.fbPixelId;
+  const gaMeasurementId = data?.gaMeasurementId;
+  const locale = data?.locale || "en";
+  const dictionary = data?.dictionary || {};
+  const supabaseUrl = data?.supabaseUrl;
+  const supabaseAnonKey = data?.supabaseAnonKey;
+  const vapidPublicKey = data?.vapidPublicKey;
+  const origin = data?.origin;
+  const user = data?.user;
 
   return (
     <html lang={locale} className="dark">
@@ -189,12 +198,12 @@ export const Layout = ({
           </main>
           <Footer />
           <AgeVerificationModal isVerified={isAgeVerified} />
-          {loaderData?.user?.role !== "premium" ||
-            (loaderData?.user?.role !== "admin" && <AntiAdBlock />)}
+          {user?.role !== "premium" ||
+            (user?.role !== "admin" && <AntiAdBlock />)}
           <PrivacyConsentBanner />
         </I18nProvider>
         <ScrollRestoration />
-        <script src="/js/fingerprint.js"></script>
+        <script src="/js/fingerprint.js" defer></script>
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -226,9 +235,9 @@ export const Layout = ({
           dangerouslySetInnerHTML={{
             __html: `
               window.ENV = ${JSON.stringify({
-                SUPABASE_URL: loaderData?.supabaseUrl,
-                SUPABASE_ANON_KEY: loaderData?.supabaseAnonKey,
-                VAPID_PUBLIC_KEY: loaderData?.vapidPublicKey,
+                SUPABASE_URL: supabaseUrl,
+                SUPABASE_ANON_KEY: supabaseAnonKey,
+                VAPID_PUBLIC_KEY: vapidPublicKey,
               })};
               
               // Register Service Worker for PWA

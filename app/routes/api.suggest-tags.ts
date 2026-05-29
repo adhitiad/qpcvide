@@ -1,6 +1,7 @@
 import type { Route } from "./+types/api.suggest-tags";
 import { data } from "react-router";
 import { requireAdmin } from "../lib/auth.server";
+import Groq from "groq-sdk";
 
 export async function loader({ request }: Route.LoaderArgs) {
   await requireAdmin(request);
@@ -29,31 +30,19 @@ export async function action({ request }: Route.ActionArgs) {
       return data({ error: "Title is required" }, { status: 400 });
     }
 
-    const prompt = `Berikan daftar tag dan kategori yang relevan untuk video dengan judul dan deskripsi berikut. Kembalikan HANYA JSON murni tanpa markdown, tanpa penjelasan, persis dengan struktur ini: {"tags": ["tag1", "tag2"], "categories": ["cat1", "cat2"]}\n\nJudul: ${title}\nDeskripsi: ${description || "Tidak ada deskripsi."}`;
+    const prompt = `Berikan daftar tag dan kategori 
+    yang relevan untuk video dengan judul dan deskripsi berikut. Kembalikan HANYA JSON murni tanpa markdown, tanpa penjelasan, persis dengan struktur ini: {"tags": ["tag1", "tag2"], "categories": ["cat1", "cat2"]}\n\nJudul: ${title}\nDeskripsi: ${description || "Tidak ada deskripsi."}`;
 
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.3,
-        response_format: { type: "json_object" },
-      }),
+    const groq = new Groq({ apiKey });
+    const response = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.3,
+      response_format: { type: "json_object" },
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Groq API error:", errorText);
-      return data({ error: "Failed to fetch suggestions from AI" }, { status: 502 });
-    }
+    const content = response.choices[0]?.message?.content || "{}";
 
-    const json = await response.json();
-    const content = json.choices[0]?.message?.content || "{}";
-    
     // Parse the JSON string from the AI
     let parsedContent;
     try {
@@ -65,9 +54,10 @@ export async function action({ request }: Route.ActionArgs) {
 
     return data({
       tags: Array.isArray(parsedContent.tags) ? parsedContent.tags : [],
-      categories: Array.isArray(parsedContent.categories) ? parsedContent.categories : [],
+      categories: Array.isArray(parsedContent.categories)
+        ? parsedContent.categories
+        : [],
     });
-
   } catch (error) {
     console.error("Suggest tags error:", error);
     return data({ error: "Internal Server Error" }, { status: 500 });

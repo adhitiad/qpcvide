@@ -3,6 +3,7 @@ import { useTranslation } from "~/context/I18nContext";
 import { SearchBar } from "./SearchBar";
 import { PushNotificationToggle } from "./PushNotificationToggle";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { InstallAppButton } from "./InstallAppButton";
 import { AdDisplay } from "./ads/AdDisplay";
 import { Search, ChevronDown, User, Sparkles, Bot } from "lucide-react";
 import { Button } from "~/components/ui/button";
@@ -117,6 +118,9 @@ export function Header() {
           <div className="flex items-center gap-2">
             {user ? (
               <>
+                <div className="hidden sm:block">
+                  <InstallAppButton />
+                </div>
                 <div className="hidden sm:block">
                   <LanguageSwitcher />
                 </div>

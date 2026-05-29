@@ -1,6 +1,7 @@
 import type { Route } from "./+types/api.suggest-summary";
 import { data } from "react-router";
 import { requireAdmin } from "../lib/auth.server";
+import Groq from "groq-sdk";
 
 export async function action({ request }: Route.ActionArgs) {
   await requireAdmin(request);
@@ -19,29 +20,21 @@ export async function action({ request }: Route.ActionArgs) {
     const { title, description } = body;
 
     if (!title || !description) {
-      return data({ error: "Title and description are required" }, { status: 400 });
+      return data(
+        { error: "Title and description are required" },
+        { status: 400 },
+      );
     }
 
     const prompt = `Buat ringkasan 2-3 kalimat untuk video dengan judul dan deskripsi berikut:\n\nJudul: ${title}\nDeskripsi: ${description}`;
 
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "llama3-8b-8192",
-        messages: [{ role: "user", content: prompt }],
-      }),
+    const groq = new Groq({ apiKey });
+    const response = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [{ role: "user", content: prompt }],
     });
 
-    if (!response.ok) {
-      return data({ error: "Failed to generate summary" }, { status: 500 });
-    }
-
-    const json = await response.json();
-    const summary = json.choices[0].message.content;
+    const summary = response.choices[0].message.content;
 
     return data({ summary });
   } catch (error) {

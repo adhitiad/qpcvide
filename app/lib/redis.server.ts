@@ -1,19 +1,21 @@
-import { Redis } from "@upstash/redis";
+import Redis from "ioredis";
 
 let redis: Redis | null = null;
 
 function getRedis(): Redis | null {
   if (redis) return redis;
 
-  const url = process.env.UPSTASH_REDIS_URL;
-  const token = process.env.UPSTASH_REDIS_TOKEN;
+  const url = process.env.REDIS_API;
 
-  if (!url || !token) {
-    console.warn("Upstash Redis credentials not found. Caching disabled.");
+  if (!url) {
+    console.warn("Redis credentials not found. Caching disabled.");
     return null;
   }
 
-  redis = new Redis({ url, token });
+  // NOTE: ioredis expects a Redis connection string (redis:// or rediss://).
+  // If UPSTASH_REDIS_URL is an HTTPS URL, you should either change it to
+  // the Redis connection string provided by Upstash, or revert back to @upstash/redis.
+  redis = new Redis(url);
   return redis;
 }
 
@@ -24,7 +26,7 @@ function getRedis(): Redis | null {
 export async function cachedQuery<T>(
   key: string,
   ttlSeconds: number,
-  queryFn: () => Promise<T>
+  queryFn: () => Promise<T>,
 ): Promise<T> {
   const client = getRedis();
 
@@ -33,9 +35,9 @@ export async function cachedQuery<T>(
   }
 
   try {
-    const cached = await client.get<T>(key);
+    const cached = await client.get(key);
     if (cached !== null && cached !== undefined) {
-      return cached;
+      return JSON.parse(cached) as T;
     }
   } catch (e) {
     console.error("Redis GET error:", e);
@@ -44,7 +46,7 @@ export async function cachedQuery<T>(
   const result = await queryFn();
 
   try {
-    await client.set(key, JSON.stringify(result), { ex: ttlSeconds });
+    await client.set(key, JSON.stringify(result), "EX", ttlSeconds);
   } catch (e) {
     console.error("Redis SET error:", e);
   }
@@ -76,13 +78,19 @@ export async function invalidateCachePattern(pattern: string): Promise<void> {
   try {
     let cursor: string | number = 0;
     do {
-      const result: [string | number, string[]] = await client.scan(cursor, { match: pattern, count: 100 });
+      const result: [string, string[]] = await client.scan(
+        cursor,
+        "MATCH",
+        pattern,
+        "COUNT",
+        100,
+      );
       cursor = result[0];
       const keys = result[1];
       if (keys.length > 0) {
         await Promise.all(keys.map((k: string) => client.del(k)));
       }
-    } while (cursor !== 0 && cursor !== "0");
+    } while (cursor !== "0");
   } catch (e) {
     console.error("Redis SCAN/DEL error:", e);
   }
