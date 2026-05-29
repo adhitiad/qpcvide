@@ -10,12 +10,10 @@ import {
 
 import type { Route } from "./+types/root";
 import { TooltipProvider } from "~/components/ui/tooltip";
-import { AgeVerificationModal } from "~/components/AgeVerificationModal";
 import { AntiAdBlock } from "~/components/AntiAdBlock";
 import { Header } from "~/components/Header";
 import { Footer } from "~/components/Footer";
 import { PrivacyConsentBanner } from "~/components/PrivacyConsentBanner";
-import { ageVerificationStorage } from "~/lib/cookie.server";
 import "./app.css";
 
 import { prisma } from "~/lib/db.server";
@@ -41,10 +39,6 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const session = await ageVerificationStorage.getSession(
-    request.headers.get("Cookie"),
-  );
-
   const authUser = await getUser(request);
   const userId = authUser?.id;
 
@@ -60,7 +54,6 @@ export async function loader({ request }: Route.LoaderArgs) {
   const dictionary = await getDictionary(locale);
 
   return {
-    isAgeVerified: session.get("age_verified") === true,
     googleAdsId: process.env.GOOGLE_ADS_CLIENT_ID,
     fbPixelId: process.env.FB_ADS_PIXEL_ID,
     gaMeasurementId: process.env.GA_MEASUREMENT_ID,
@@ -96,7 +89,7 @@ export const Layout = ({
 }) => {
   const routeLoaderData = useRouteLoaderData<typeof loader>("root");
   const data = loaderData || routeLoaderData || {};
-  
+
   const isAgeVerified = data?.isAgeVerified ?? true;
   const googleAdsId = data?.googleAdsId;
   const fbPixelId = data?.fbPixelId;
@@ -197,7 +190,7 @@ export const Layout = ({
             <TooltipProvider>{children}</TooltipProvider>
           </main>
           <Footer />
-          <AgeVerificationModal isVerified={isAgeVerified} />
+
           {user?.role !== "premium" ||
             (user?.role !== "admin" && <AntiAdBlock />)}
           <PrivacyConsentBanner />
@@ -255,7 +248,7 @@ export const Layout = ({
                 window.deferredPrompt = e;
                 // You can trigger a custom UI here to show "Install App"
               });
-            `
+            `,
           }}
         />
         <Scripts />
