@@ -3,7 +3,7 @@ import { Link, Form, useActionData, useNavigation, useSubmit } from "react-route
 import { useState } from "react";
 import { requireAdmin } from "../../../lib/auth.server";
 import { prisma } from "../../../lib/db.server";
-import { uploadFileToSupabase } from "../../../lib/storage.server";
+
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Textarea } from "../../../components/ui/textarea";
@@ -57,56 +57,10 @@ export async function action({ request }: Route.ActionArgs) {
   // Categories
   const categoryIds = formData.getAll("categoryIds") as string[];
 
-  // Thumbnail upload
-  const thumbnailFiles = formData.getAll("thumbnail") as File[];
-  let thumbnailUrl = "";
-
-  if (thumbnailFiles && thumbnailFiles.length > 0 && thumbnailFiles[0].size > 0) {
-    const uploadedUrls = [];
-    for (const file of thumbnailFiles) {
-      if (file.size > 0) {
-        const url = await uploadFileToSupabase(file, "thumbnails");
-        if (url) uploadedUrls.push(url);
-      }
-    }
-    
-    if (uploadedUrls.length === 0) {
-      return { error: "Failed to upload thumbnail to Supabase." };
-    }
-
-    if (uploadedUrls.length === 1) {
-      thumbnailUrl = uploadedUrls[0];
-    } else {
-      try {
-        const apiKey = process.env.GROQ_API_KEY;
-        if (apiKey) {
-          const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-            method: "POST",
-            headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
-            body: JSON.stringify({
-              model: "llama-3.2-90b-vision-preview",
-              messages: [{
-                role: "user",
-                content: [
-                  { type: "text", text: "Berikan indeks (0 sampai N-1) dari gambar yang paling estetis. HANYA JSON: {\"bestIndex\": 0}" },
-                  ...uploadedUrls.map(url => ({ type: "image_url", image_url: { url } }))
-                ]
-              }],
-              response_format: { type: "json_object" }
-            }),
-          });
-          const json = await response.json();
-          const parsed = JSON.parse(json.choices[0].message.content);
-          thumbnailUrl = uploadedUrls[parsed.bestIndex || 0];
-        } else {
-          thumbnailUrl = uploadedUrls[0];
-        }
-      } catch (e) {
-        thumbnailUrl = uploadedUrls[0];
-      }
-    }
-  } else {
-    return { error: "Thumbnail is required." };
+  // Thumbnail
+  const thumbnailUrl = formData.get("thumbnail") as string;
+  if (!thumbnailUrl) {
+    return { error: "Thumbnail URL is required." };
   }
 
   // Create or connect Tags
@@ -363,15 +317,14 @@ export default function AdminVideosNew({ loaderData }: Route.ComponentProps) {
             </div>
 
             <div>
-              <Label htmlFor="thumbnail">Thumbnail Files (Upload up to 5 candidates for AI selection)</Label>
+              <Label htmlFor="thumbnail">Thumbnail URL</Label>
               <Input
                 id="thumbnail"
                 name="thumbnail"
-                type="file"
-                accept="image/*"
-                multiple
+                type="url"
+                placeholder="https://example.com/image.jpg"
                 required
-                className="bg-night-card border-night-border mt-1 file:text-night-cyan"
+                className="bg-night-card border-night-border mt-1"
               />
             </div>
 

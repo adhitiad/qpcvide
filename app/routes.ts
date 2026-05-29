@@ -33,13 +33,20 @@ export default [
   route("api/recommendations", "routes/api.recommendations.ts"),
   route("api/search-ai", "routes/api.search-ai.ts"),
   route("api/search-referrer", "routes/api.search-referrer.ts"),
+  route("api/push-subscribe", "routes/api.push-subscribe.ts"),
+  route("api/report", "routes/api.report.ts"),
+  route("api/select-thumbnail", "routes/api.select-thumbnail.ts"),
+  route("api/suggest-summary", "routes/api.suggest-summary.ts"),
+  route("api/suggest-tags", "routes/api.suggest-tags.ts"),
   route("chat", "routes/chat.tsx"),
+  route("share-target", "routes/share-target.tsx"),
   route("sitemap.xml", "routes/sitemap.xml.ts"),
   route("robots.txt", "routes/robots.txt.ts"),
 
   // Admin Routes
-  layout("routes/admin.tsx", [
+  route("admin", "routes/admin.tsx", [
     index("routes/admin._index.tsx"),
+    route("analytics", "routes/admin.analytics.tsx"),
     route("videos", "routes/admin/videos/index.tsx"),
     route("videos/new", "routes/admin/videos/new.tsx"),
     route("videos/:id/edit", "routes/admin/videos/$id.edit.tsx"),
@@ -51,5 +58,6 @@ export default [
     route("revenue", "routes/admin.revenue.tsx"),
     route("moderations", "routes/admin.moderations.tsx"),
     route("block-status", "routes/admin.block-status.tsx"),
+    route("notifications", "routes/admin.notifications.tsx"),
   ]),
 ] satisfies RouteConfig;

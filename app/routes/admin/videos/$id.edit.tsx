@@ -3,7 +3,7 @@ import { Link, Form, useActionData, useNavigation } from "react-router";
 import { useState } from "react";
 import { requireAdmin } from "../../../lib/auth.server";
 import { prisma } from "../../../lib/db.server";
-import { uploadFileToSupabase } from "../../../lib/storage.server";
+
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Textarea } from "../../../components/ui/textarea";
@@ -73,55 +73,8 @@ export async function action({ request, params }: Route.ActionArgs) {
   // Categories
   const categoryIds = formData.getAll("categoryIds") as string[];
 
-  // Thumbnail upload (Optional on edit)
-  const thumbnailFiles = formData.getAll("thumbnail") as File[];
-  let thumbnailUrl = undefined;
-
-  if (thumbnailFiles && thumbnailFiles.length > 0 && thumbnailFiles[0].size > 0) {
-    const uploadedUrls = [];
-    for (const file of thumbnailFiles) {
-      if (file.size > 0) {
-        const url = await uploadFileToSupabase(file, "thumbnails");
-        if (url) uploadedUrls.push(url);
-      }
-    }
-    
-    if (uploadedUrls.length > 0) {
-      if (uploadedUrls.length === 1) {
-        thumbnailUrl = uploadedUrls[0];
-      } else {
-        try {
-          const apiKey = process.env.GROQ_API_KEY;
-          if (apiKey) {
-            const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-              method: "POST",
-              headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
-              body: JSON.stringify({
-                model: "llama-3.2-90b-vision-preview",
-                messages: [{
-                  role: "user",
-                  content: [
-                    { type: "text", text: "Berikan indeks (0 sampai N-1) dari gambar yang paling estetis. HANYA JSON: {\"bestIndex\": 0}" },
-                    ...uploadedUrls.map(url => ({ type: "image_url", image_url: { url } }))
-                  ]
-                }],
-                response_format: { type: "json_object" }
-              }),
-            });
-            const json = await response.json();
-            const parsed = JSON.parse(json.choices[0].message.content);
-            thumbnailUrl = uploadedUrls[parsed.bestIndex || 0];
-          } else {
-            thumbnailUrl = uploadedUrls[0];
-          }
-        } catch (e) {
-          thumbnailUrl = uploadedUrls[0];
-        }
-      }
-    } else {
-      return { error: "Failed to upload new thumbnail to Supabase." };
-    }
-  }
+  // Thumbnail (Optional on edit)
+  const thumbnailUrl = formData.get("thumbnail") as string;
 
   try {
     // 1. Unlink existing tags/categories to replace them
@@ -330,15 +283,14 @@ export default function AdminVideosEdit({ loaderData }: Route.ComponentProps) {
 
             <div>
               <Label htmlFor="thumbnail">
-                Thumbnail Files (Upload up to 5 candidates for AI selection, leave empty to keep current)
+                Thumbnail URL (Leave empty to keep current)
               </Label>
               <Input
                 id="thumbnail"
                 name="thumbnail"
-                type="file"
-                accept="image/*"
-                multiple
-                className="bg-night-card border-night-border mt-1 file:text-night-cyan"
+                type="url"
+                placeholder="https://example.com/image.jpg"
+                className="bg-night-card border-night-border mt-1"
               />
               {video.thumbnail && (
                 <div className="mt-2">

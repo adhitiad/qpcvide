@@ -74,6 +74,7 @@ export const meta = ({ data }: Route.MetaArgs) => {
 
 export async function loader({ params, request }: Route.LoaderArgs) {
   const { slug } = params;
+  console.log("video loader called with slug:", slug);
   const authUser = await getUser(request);
   const userId = authUser?.id;
   const locale = await getLocale(request);
@@ -127,6 +128,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     });
   }
 
+  console.log("video after query:", video ? video.id : "NOT FOUND");
   if (!video) throw new Response("Not Found", { status: 404 });
 
   let isLiked = false;
