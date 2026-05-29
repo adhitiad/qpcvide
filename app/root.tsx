@@ -234,12 +234,20 @@ export const Layout = ({
                 VAPID_PUBLIC_KEY: vapidPublicKey,
               })};
               
-              // Register Service Worker for PWA
+              // Unregister ALL Service Workers to clear stale PWA caches and fix reload loops
               if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                  navigator.serviceWorker.register('/sw.js', { scope: '/' })
-                    .then(reg => console.log('SW registered!', reg))
-                    .catch(err => console.error('SW registration failed', err));
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                  for(let registration of registrations) {
+                    registration.unregister();
+                  }
+                });
+              }
+              // Clear all caches just in case
+              if ('caches' in window) {
+                caches.keys().then(function(names) {
+                  for (let name of names) {
+                    caches.delete(name);
+                  }
                 });
               }
 
