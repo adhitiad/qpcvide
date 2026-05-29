@@ -113,7 +113,7 @@ export const Layout = ({
         <meta name="theme-color" content="#0A0A0F" />
 
         {/* Global JSON-LD */}
-        {loaderData?.origin && (
+        {origin && (
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{
@@ -121,10 +121,10 @@ export const Layout = ({
                 "@context": "https://schema.org",
                 "@type": "WebSite",
                 name: "Auiso",
-                url: loaderData.origin,
+                url: origin,
                 potentialAction: {
                   "@type": "SearchAction",
-                  target: `${loaderData.origin}/search?q={search_term_string}`,
+                  target: `${origin}/search?q={search_term_string}`,
                   "query-input": "required name=search_term_string",
                 },
               }),
@@ -191,8 +191,9 @@ export const Layout = ({
           </main>
           <Footer />
 
-          {user?.role !== "premium" ||
-            (user?.role !== "admin" && <AntiAdBlock />)}
+          {user?.role !== "premium" && user?.role !== "admin" && (
+            <AntiAdBlock />
+          )}
           <PrivacyConsentBanner />
         </I18nProvider>
         <ScrollRestoration />
