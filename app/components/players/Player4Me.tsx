@@ -13,7 +13,6 @@ export function Player4Me({ videoId, title, className, onError }: Player4MeProps
         src={`https://404.4meplayer.com/#${videoId}`}
         className="absolute inset-0 w-full h-full"
         allowFullScreen
-        sandbox="allow-same-origin allow-scripts allow-popups"
         referrerPolicy="no-referrer"
         onError={onError}
       />
