@@ -1,6 +1,7 @@
 import type { Route } from "./+types/api.select-thumbnail";
 import { data } from "react-router";
 import { requireAdmin } from "../lib/auth.server";
+import Groq from "groq-sdk";
 
 export async function action({ request }: Route.ActionArgs) {
   await requireAdmin(request);
@@ -22,7 +23,8 @@ export async function action({ request }: Route.ActionArgs) {
       return data({ error: "Images array is required" }, { status: 400 });
     }
 
-    // Call Groq Vision API to determine the best thumbnail
+    const groq = new Groq({ apiKey });
+
     // Llama-3 Vision (llama-3.2-90b-vision-preview or similar)
     const prompt = "Anda adalah asisten kurasi thumbnail video. Dari gambar-gambar berikut, berikan indeks (0 sampai N-1) dari gambar yang paling estetis, menarik perhatian, dan memiliki pencahayaan terbaik. Kembalikan HANYA format JSON seperti ini: {\"bestIndex\": 0}";
 
@@ -39,27 +41,13 @@ export async function action({ request }: Route.ActionArgs) {
       }
     ];
 
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "llama-3.2-90b-vision-preview",
-        messages,
-        response_format: { type: "json_object" }
-      }),
+    const response = await groq.chat.completions.create({
+      model: "llama-3.2-90b-vision-preview",
+      messages: messages as any,
+      response_format: { type: "json_object" },
     });
 
-    if (!response.ok) {
-      const err = await response.text();
-      console.error("Groq Vision API Error:", err);
-      return data({ error: "Failed to process images" }, { status: 500 });
-    }
-
-    const json = await response.json();
-    const content = json.choices[0].message.content;
+    const content = response.choices[0]?.message?.content || "{}";
     const parsed = JSON.parse(content);
 
     return data({ bestIndex: parsed.bestIndex || 0 });

@@ -1,3 +1,5 @@
+import Groq from "groq-sdk";
+
 export async function moderateContent(text: string, imageUrl?: string): Promise<{ isSafe: boolean; score: number; flag: string; error?: string }> {
   const apiKey = process.env.GROQ_API_KEY;
   
@@ -7,18 +9,9 @@ export async function moderateContent(text: string, imageUrl?: string): Promise<
   }
 
   try {
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "llama-guard-3-8b",
-        messages: [
-          {
-            role: "user",
-            content: `[INST] Task: Check if there is unsafe content in 'User' messages in conversations according our safety policy with the below categories.
+    const groq = new Groq({ apiKey });
+    
+    const prompt = `[INST] Task: Check if there is unsafe content in 'User' messages in conversations according our safety policy with the below categories.
 
 <BEGIN UNSAFE CONTENT CATEGORIES>
 O1: Violence and Hate.
@@ -48,21 +41,15 @@ Image URL: ${imageUrl || "None"}
 
 Provide your safety assessment for User in the above conversation:
 - First line must read 'safe' or 'unsafe'.
-- If unsafe, a second line must include a comma-separated list of violated categories. [/INST]`
-          }
-        ],
-        temperature: 0.0,
-      })
+- If unsafe, a second line must include a comma-separated list of violated categories. [/INST]`;
+
+    const response = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.0,
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Groq API Error:", errorText);
-      return { isSafe: true, score: 0, flag: "error", error: "API Request Failed" };
-    }
-
-    const data = await response.json();
-    const resultText = data.choices?.[0]?.message?.content?.trim().toLowerCase() || "safe";
+    const resultText = response.choices?.[0]?.message?.content?.trim().toLowerCase() || "safe";
     
     const isSafe = resultText.startsWith("safe");
     const score = isSafe ? 0.1 : 0.95; // 0.95 means unsafe
