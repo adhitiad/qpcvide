@@ -1,0 +1,1186 @@
+{
+  "buildManifest": {
+    "serverBundles": {
+      "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0": {
+        "id": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+        "file": "build/server/nodejs_eyJydW50aW1lIjoibm9kZWpzIn0/index.js",
+        "config": {
+          "runtime": "nodejs"
+        }
+      }
+    },
+    "routeIdToServerBundleId": {
+      "routes/_index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/history": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/bookmarks": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.interact": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.comments": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.search": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.ads.track": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.ads.serve": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/search": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/search-ai": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/recommended": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/advertise": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/advertise.checkout.$id": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/advertise.success": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/video.$slug": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/category.$slug": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/login": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/register": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/logout": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/privacy": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/terms": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/dmca": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/contact": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.verify-age": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.chat": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.cron": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.events": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.ip": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.moderate": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.recommendations": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.search-ai": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.search-referrer": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.push-subscribe": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.report": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.select-thumbnail": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.suggest-summary": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.suggest-tags": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/chat": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/share-target": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/sitemap.xml": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/robots.txt": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin._index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.analytics": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin/videos/index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin/videos/new": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin/videos/$id.edit": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.tags": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.categories": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.comments": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.ads": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.ads.purchases": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.revenue": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.moderations": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.block-status": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.notifications": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
+    },
+    "routes": {
+      "root": {
+        "id": "root",
+        "file": "app/root.tsx",
+        "path": "",
+        "config": {}
+      },
+      "routes/_index": {
+        "id": "routes/_index",
+        "parentId": "root",
+        "file": "app/routes/_index.tsx",
+        "index": true,
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/history": {
+        "id": "routes/history",
+        "parentId": "root",
+        "file": "app/routes/history.tsx",
+        "path": "history",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/bookmarks": {
+        "id": "routes/bookmarks",
+        "parentId": "root",
+        "file": "app/routes/bookmarks.tsx",
+        "path": "bookmarks",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.interact": {
+        "id": "routes/api.interact",
+        "parentId": "root",
+        "file": "app/routes/api.interact.ts",
+        "path": "api/interact",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.comments": {
+        "id": "routes/api.comments",
+        "parentId": "root",
+        "file": "app/routes/api.comments.ts",
+        "path": "api/comments",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.search": {
+        "id": "routes/api.search",
+        "parentId": "root",
+        "file": "app/routes/api.search.ts",
+        "path": "api/search",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.ads.track": {
+        "id": "routes/api.ads.track",
+        "parentId": "root",
+        "file": "app/routes/api.ads.track.ts",
+        "path": "api/ads/track",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.ads.serve": {
+        "id": "routes/api.ads.serve",
+        "parentId": "root",
+        "file": "app/routes/api.ads.serve.ts",
+        "path": "api/ads/serve",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/search": {
+        "id": "routes/search",
+        "parentId": "root",
+        "file": "app/routes/search.tsx",
+        "path": "search",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/search-ai": {
+        "id": "routes/search-ai",
+        "parentId": "root",
+        "file": "app/routes/search-ai.tsx",
+        "path": "search-ai",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/recommended": {
+        "id": "routes/recommended",
+        "parentId": "root",
+        "file": "app/routes/recommended.tsx",
+        "path": "recommended",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/advertise": {
+        "id": "routes/advertise",
+        "parentId": "root",
+        "file": "app/routes/advertise.tsx",
+        "path": "advertise",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/advertise.checkout.$id": {
+        "id": "routes/advertise.checkout.$id",
+        "parentId": "root",
+        "file": "app/routes/advertise.checkout.$id.tsx",
+        "path": "advertise/checkout/:id",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/advertise.success": {
+        "id": "routes/advertise.success",
+        "parentId": "root",
+        "file": "app/routes/advertise.success.tsx",
+        "path": "advertise/success",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/video.$slug": {
+        "id": "routes/video.$slug",
+        "parentId": "root",
+        "file": "app/routes/video.$slug.tsx",
+        "path": "video/:slug",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/category.$slug": {
+        "id": "routes/category.$slug",
+        "parentId": "root",
+        "file": "app/routes/category.$slug.tsx",
+        "path": "category/:slug",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/login": {
+        "id": "routes/login",
+        "parentId": "root",
+        "file": "app/routes/login.tsx",
+        "path": "login",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/register": {
+        "id": "routes/register",
+        "parentId": "root",
+        "file": "app/routes/register.tsx",
+        "path": "register",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/logout": {
+        "id": "routes/logout",
+        "parentId": "root",
+        "file": "app/routes/logout.tsx",
+        "path": "logout",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/privacy": {
+        "id": "routes/privacy",
+        "parentId": "root",
+        "file": "app/routes/privacy.tsx",
+        "path": "privacy",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/terms": {
+        "id": "routes/terms",
+        "parentId": "root",
+        "file": "app/routes/terms.tsx",
+        "path": "terms",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/dmca": {
+        "id": "routes/dmca",
+        "parentId": "root",
+        "file": "app/routes/dmca.tsx",
+        "path": "dmca",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/contact": {
+        "id": "routes/contact",
+        "parentId": "root",
+        "file": "app/routes/contact.tsx",
+        "path": "contact",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.verify-age": {
+        "id": "routes/api.verify-age",
+        "parentId": "root",
+        "file": "app/routes/api.verify-age.ts",
+        "path": "api/verify-age",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.chat": {
+        "id": "routes/api.chat",
+        "parentId": "root",
+        "file": "app/routes/api.chat.ts",
+        "path": "api/chat",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.cron": {
+        "id": "routes/api.cron",
+        "parentId": "root",
+        "file": "app/routes/api.cron.ts",
+        "path": "api/cron",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.events": {
+        "id": "routes/api.events",
+        "parentId": "root",
+        "file": "app/routes/api.events.ts",
+        "path": "api/events",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.ip": {
+        "id": "routes/api.ip",
+        "parentId": "root",
+        "file": "app/routes/api.ip.ts",
+        "path": "api/ip",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.moderate": {
+        "id": "routes/api.moderate",
+        "parentId": "root",
+        "file": "app/routes/api.moderate.ts",
+        "path": "api/moderate",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.recommendations": {
+        "id": "routes/api.recommendations",
+        "parentId": "root",
+        "file": "app/routes/api.recommendations.ts",
+        "path": "api/recommendations",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.search-ai": {
+        "id": "routes/api.search-ai",
+        "parentId": "root",
+        "file": "app/routes/api.search-ai.ts",
+        "path": "api/search-ai",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.search-referrer": {
+        "id": "routes/api.search-referrer",
+        "parentId": "root",
+        "file": "app/routes/api.search-referrer.ts",
+        "path": "api/search-referrer",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.push-subscribe": {
+        "id": "routes/api.push-subscribe",
+        "parentId": "root",
+        "file": "app/routes/api.push-subscribe.ts",
+        "path": "api/push-subscribe",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.report": {
+        "id": "routes/api.report",
+        "parentId": "root",
+        "file": "app/routes/api.report.ts",
+        "path": "api/report",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.select-thumbnail": {
+        "id": "routes/api.select-thumbnail",
+        "parentId": "root",
+        "file": "app/routes/api.select-thumbnail.ts",
+        "path": "api/select-thumbnail",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.suggest-summary": {
+        "id": "routes/api.suggest-summary",
+        "parentId": "root",
+        "file": "app/routes/api.suggest-summary.ts",
+        "path": "api/suggest-summary",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.suggest-tags": {
+        "id": "routes/api.suggest-tags",
+        "parentId": "root",
+        "file": "app/routes/api.suggest-tags.ts",
+        "path": "api/suggest-tags",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/chat": {
+        "id": "routes/chat",
+        "parentId": "root",
+        "file": "app/routes/chat.tsx",
+        "path": "chat",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/share-target": {
+        "id": "routes/share-target",
+        "parentId": "root",
+        "file": "app/routes/share-target.tsx",
+        "path": "share-target",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/sitemap.xml": {
+        "id": "routes/sitemap.xml",
+        "parentId": "root",
+        "file": "app/routes/sitemap.xml.ts",
+        "path": "sitemap.xml",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/robots.txt": {
+        "id": "routes/robots.txt",
+        "parentId": "root",
+        "file": "app/routes/robots.txt.ts",
+        "path": "robots.txt",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin": {
+        "id": "routes/admin",
+        "parentId": "root",
+        "file": "app/routes/admin.tsx",
+        "path": "admin",
+        "config": {}
+      },
+      "routes/admin._index": {
+        "id": "routes/admin._index",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin._index.tsx",
+        "index": true,
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.analytics": {
+        "id": "routes/admin.analytics",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.analytics.tsx",
+        "path": "analytics",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin/videos/index": {
+        "id": "routes/admin/videos/index",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin/videos/index.tsx",
+        "path": "videos",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin/videos/new": {
+        "id": "routes/admin/videos/new",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin/videos/new.tsx",
+        "path": "videos/new",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin/videos/$id.edit": {
+        "id": "routes/admin/videos/$id.edit",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin/videos/$id.edit.tsx",
+        "path": "videos/:id/edit",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.tags": {
+        "id": "routes/admin.tags",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.tags.tsx",
+        "path": "tags",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.categories": {
+        "id": "routes/admin.categories",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.categories.tsx",
+        "path": "categories",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.comments": {
+        "id": "routes/admin.comments",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.comments.tsx",
+        "path": "comments",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.ads": {
+        "id": "routes/admin.ads",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.ads.tsx",
+        "path": "ads",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.ads.purchases": {
+        "id": "routes/admin.ads.purchases",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.ads.purchases.tsx",
+        "path": "ads/purchases",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.revenue": {
+        "id": "routes/admin.revenue",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.revenue.tsx",
+        "path": "revenue",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.moderations": {
+        "id": "routes/admin.moderations",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.moderations.tsx",
+        "path": "moderations",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.block-status": {
+        "id": "routes/admin.block-status",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.block-status.tsx",
+        "path": "block-status",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.notifications": {
+        "id": "routes/admin.notifications",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.notifications.tsx",
+        "path": "notifications",
+        "config": {
+          "runtime": "nodejs"
+        }
+      }
+    }
+  },
+  "reactRouterConfig": {
+    "appDirectory": "E:/code/qpcvide/app",
+    "basename": "/",
+    "buildDirectory": "E:/code/qpcvide/build",
+    "future": {
+      "unstable_optimizeDeps": false,
+      "v8_passThroughRequests": false,
+      "unstable_trailingSlashAwareDataRequests": false,
+      "unstable_previewServerPrerendering": false,
+      "v8_middleware": false,
+      "v8_splitRouteModules": false,
+      "v8_viteEnvironmentApi": false
+    },
+    "routes": {
+      "root": {
+        "id": "root",
+        "file": "root.tsx",
+        "path": ""
+      },
+      "routes/_index": {
+        "id": "routes/_index",
+        "parentId": "root",
+        "file": "routes/_index.tsx",
+        "index": true
+      },
+      "routes/history": {
+        "id": "routes/history",
+        "parentId": "root",
+        "file": "routes/history.tsx",
+        "path": "history"
+      },
+      "routes/bookmarks": {
+        "id": "routes/bookmarks",
+        "parentId": "root",
+        "file": "routes/bookmarks.tsx",
+        "path": "bookmarks"
+      },
+      "routes/api.interact": {
+        "id": "routes/api.interact",
+        "parentId": "root",
+        "file": "routes/api.interact.ts",
+        "path": "api/interact"
+      },
+      "routes/api.comments": {
+        "id": "routes/api.comments",
+        "parentId": "root",
+        "file": "routes/api.comments.ts",
+        "path": "api/comments"
+      },
+      "routes/api.search": {
+        "id": "routes/api.search",
+        "parentId": "root",
+        "file": "routes/api.search.ts",
+        "path": "api/search"
+      },
+      "routes/api.ads.track": {
+        "id": "routes/api.ads.track",
+        "parentId": "root",
+        "file": "routes/api.ads.track.ts",
+        "path": "api/ads/track"
+      },
+      "routes/api.ads.serve": {
+        "id": "routes/api.ads.serve",
+        "parentId": "root",
+        "file": "routes/api.ads.serve.ts",
+        "path": "api/ads/serve"
+      },
+      "routes/search": {
+        "id": "routes/search",
+        "parentId": "root",
+        "file": "routes/search.tsx",
+        "path": "search"
+      },
+      "routes/search-ai": {
+        "id": "routes/search-ai",
+        "parentId": "root",
+        "file": "routes/search-ai.tsx",
+        "path": "search-ai"
+      },
+      "routes/recommended": {
+        "id": "routes/recommended",
+        "parentId": "root",
+        "file": "routes/recommended.tsx",
+        "path": "recommended"
+      },
+      "routes/advertise": {
+        "id": "routes/advertise",
+        "parentId": "root",
+        "file": "routes/advertise.tsx",
+        "path": "advertise"
+      },
+      "routes/advertise.checkout.$id": {
+        "id": "routes/advertise.checkout.$id",
+        "parentId": "root",
+        "file": "routes/advertise.checkout.$id.tsx",
+        "path": "advertise/checkout/:id"
+      },
+      "routes/advertise.success": {
+        "id": "routes/advertise.success",
+        "parentId": "root",
+        "file": "routes/advertise.success.tsx",
+        "path": "advertise/success"
+      },
+      "routes/video.$slug": {
+        "id": "routes/video.$slug",
+        "parentId": "root",
+        "file": "routes/video.$slug.tsx",
+        "path": "video/:slug"
+      },
+      "routes/category.$slug": {
+        "id": "routes/category.$slug",
+        "parentId": "root",
+        "file": "routes/category.$slug.tsx",
+        "path": "category/:slug"
+      },
+      "routes/login": {
+        "id": "routes/login",
+        "parentId": "root",
+        "file": "routes/login.tsx",
+        "path": "login"
+      },
+      "routes/register": {
+        "id": "routes/register",
+        "parentId": "root",
+        "file": "routes/register.tsx",
+        "path": "register"
+      },
+      "routes/logout": {
+        "id": "routes/logout",
+        "parentId": "root",
+        "file": "routes/logout.tsx",
+        "path": "logout"
+      },
+      "routes/privacy": {
+        "id": "routes/privacy",
+        "parentId": "root",
+        "file": "routes/privacy.tsx",
+        "path": "privacy"
+      },
+      "routes/terms": {
+        "id": "routes/terms",
+        "parentId": "root",
+        "file": "routes/terms.tsx",
+        "path": "terms"
+      },
+      "routes/dmca": {
+        "id": "routes/dmca",
+        "parentId": "root",
+        "file": "routes/dmca.tsx",
+        "path": "dmca"
+      },
+      "routes/contact": {
+        "id": "routes/contact",
+        "parentId": "root",
+        "file": "routes/contact.tsx",
+        "path": "contact"
+      },
+      "routes/api.verify-age": {
+        "id": "routes/api.verify-age",
+        "parentId": "root",
+        "file": "routes/api.verify-age.ts",
+        "path": "api/verify-age"
+      },
+      "routes/api.chat": {
+        "id": "routes/api.chat",
+        "parentId": "root",
+        "file": "routes/api.chat.ts",
+        "path": "api/chat"
+      },
+      "routes/api.cron": {
+        "id": "routes/api.cron",
+        "parentId": "root",
+        "file": "routes/api.cron.ts",
+        "path": "api/cron"
+      },
+      "routes/api.events": {
+        "id": "routes/api.events",
+        "parentId": "root",
+        "file": "routes/api.events.ts",
+        "path": "api/events"
+      },
+      "routes/api.ip": {
+        "id": "routes/api.ip",
+        "parentId": "root",
+        "file": "routes/api.ip.ts",
+        "path": "api/ip"
+      },
+      "routes/api.moderate": {
+        "id": "routes/api.moderate",
+        "parentId": "root",
+        "file": "routes/api.moderate.ts",
+        "path": "api/moderate"
+      },
+      "routes/api.recommendations": {
+        "id": "routes/api.recommendations",
+        "parentId": "root",
+        "file": "routes/api.recommendations.ts",
+        "path": "api/recommendations"
+      },
+      "routes/api.search-ai": {
+        "id": "routes/api.search-ai",
+        "parentId": "root",
+        "file": "routes/api.search-ai.ts",
+        "path": "api/search-ai"
+      },
+      "routes/api.search-referrer": {
+        "id": "routes/api.search-referrer",
+        "parentId": "root",
+        "file": "routes/api.search-referrer.ts",
+        "path": "api/search-referrer"
+      },
+      "routes/api.push-subscribe": {
+        "id": "routes/api.push-subscribe",
+        "parentId": "root",
+        "file": "routes/api.push-subscribe.ts",
+        "path": "api/push-subscribe"
+      },
+      "routes/api.report": {
+        "id": "routes/api.report",
+        "parentId": "root",
+        "file": "routes/api.report.ts",
+        "path": "api/report"
+      },
+      "routes/api.select-thumbnail": {
+        "id": "routes/api.select-thumbnail",
+        "parentId": "root",
+        "file": "routes/api.select-thumbnail.ts",
+        "path": "api/select-thumbnail"
+      },
+      "routes/api.suggest-summary": {
+        "id": "routes/api.suggest-summary",
+        "parentId": "root",
+        "file": "routes/api.suggest-summary.ts",
+        "path": "api/suggest-summary"
+      },
+      "routes/api.suggest-tags": {
+        "id": "routes/api.suggest-tags",
+        "parentId": "root",
+        "file": "routes/api.suggest-tags.ts",
+        "path": "api/suggest-tags"
+      },
+      "routes/chat": {
+        "id": "routes/chat",
+        "parentId": "root",
+        "file": "routes/chat.tsx",
+        "path": "chat"
+      },
+      "routes/share-target": {
+        "id": "routes/share-target",
+        "parentId": "root",
+        "file": "routes/share-target.tsx",
+        "path": "share-target"
+      },
+      "routes/sitemap.xml": {
+        "id": "routes/sitemap.xml",
+        "parentId": "root",
+        "file": "routes/sitemap.xml.ts",
+        "path": "sitemap.xml"
+      },
+      "routes/robots.txt": {
+        "id": "routes/robots.txt",
+        "parentId": "root",
+        "file": "routes/robots.txt.ts",
+        "path": "robots.txt"
+      },
+      "routes/admin": {
+        "id": "routes/admin",
+        "parentId": "root",
+        "file": "routes/admin.tsx",
+        "path": "admin"
+      },
+      "routes/admin._index": {
+        "id": "routes/admin._index",
+        "parentId": "routes/admin",
+        "file": "routes/admin._index.tsx",
+        "index": true
+      },
+      "routes/admin.analytics": {
+        "id": "routes/admin.analytics",
+        "parentId": "routes/admin",
+        "file": "routes/admin.analytics.tsx",
+        "path": "analytics"
+      },
+      "routes/admin/videos/index": {
+        "id": "routes/admin/videos/index",
+        "parentId": "routes/admin",
+        "file": "routes/admin/videos/index.tsx",
+        "path": "videos"
+      },
+      "routes/admin/videos/new": {
+        "id": "routes/admin/videos/new",
+        "parentId": "routes/admin",
+        "file": "routes/admin/videos/new.tsx",
+        "path": "videos/new"
+      },
+      "routes/admin/videos/$id.edit": {
+        "id": "routes/admin/videos/$id.edit",
+        "parentId": "routes/admin",
+        "file": "routes/admin/videos/$id.edit.tsx",
+        "path": "videos/:id/edit"
+      },
+      "routes/admin.tags": {
+        "id": "routes/admin.tags",
+        "parentId": "routes/admin",
+        "file": "routes/admin.tags.tsx",
+        "path": "tags"
+      },
+      "routes/admin.categories": {
+        "id": "routes/admin.categories",
+        "parentId": "routes/admin",
+        "file": "routes/admin.categories.tsx",
+        "path": "categories"
+      },
+      "routes/admin.comments": {
+        "id": "routes/admin.comments",
+        "parentId": "routes/admin",
+        "file": "routes/admin.comments.tsx",
+        "path": "comments"
+      },
+      "routes/admin.ads": {
+        "id": "routes/admin.ads",
+        "parentId": "routes/admin",
+        "file": "routes/admin.ads.tsx",
+        "path": "ads"
+      },
+      "routes/admin.ads.purchases": {
+        "id": "routes/admin.ads.purchases",
+        "parentId": "routes/admin",
+        "file": "routes/admin.ads.purchases.tsx",
+        "path": "ads/purchases"
+      },
+      "routes/admin.revenue": {
+        "id": "routes/admin.revenue",
+        "parentId": "routes/admin",
+        "file": "routes/admin.revenue.tsx",
+        "path": "revenue"
+      },
+      "routes/admin.moderations": {
+        "id": "routes/admin.moderations",
+        "parentId": "routes/admin",
+        "file": "routes/admin.moderations.tsx",
+        "path": "moderations"
+      },
+      "routes/admin.block-status": {
+        "id": "routes/admin.block-status",
+        "parentId": "routes/admin",
+        "file": "routes/admin.block-status.tsx",
+        "path": "block-status"
+      },
+      "routes/admin.notifications": {
+        "id": "routes/admin.notifications",
+        "parentId": "routes/admin",
+        "file": "routes/admin.notifications.tsx",
+        "path": "notifications"
+      }
+    },
+    "routeDiscovery": {
+      "mode": "lazy",
+      "manifestPath": "/__manifest"
+    },
+    "serverBuildFile": "index.js",
+    "serverModuleFormat": "esm",
+    "ssr": true,
+    "subResourceIntegrity": false,
+    "allowedActionOrigins": false,
+    "unstable_routeConfig": [
+      {
+        "id": "root",
+        "path": "",
+        "file": "root.tsx",
+        "children": [
+          {
+            "file": "routes/_index.tsx",
+            "index": true
+          },
+          {
+            "file": "routes/history.tsx",
+            "path": "history"
+          },
+          {
+            "file": "routes/bookmarks.tsx",
+            "path": "bookmarks"
+          },
+          {
+            "file": "routes/api.interact.ts",
+            "path": "api/interact"
+          },
+          {
+            "file": "routes/api.comments.ts",
+            "path": "api/comments"
+          },
+          {
+            "file": "routes/api.search.ts",
+            "path": "api/search"
+          },
+          {
+            "file": "routes/api.ads.track.ts",
+            "path": "api/ads/track"
+          },
+          {
+            "file": "routes/api.ads.serve.ts",
+            "path": "api/ads/serve"
+          },
+          {
+            "file": "routes/search.tsx",
+            "path": "search"
+          },
+          {
+            "file": "routes/search-ai.tsx",
+            "path": "search-ai"
+          },
+          {
+            "file": "routes/recommended.tsx",
+            "path": "recommended"
+          },
+          {
+            "file": "routes/advertise.tsx",
+            "path": "advertise"
+          },
+          {
+            "file": "routes/advertise.checkout.$id.tsx",
+            "path": "advertise/checkout/:id"
+          },
+          {
+            "file": "routes/advertise.success.tsx",
+            "path": "advertise/success"
+          },
+          {
+            "file": "routes/video.$slug.tsx",
+            "path": "video/:slug"
+          },
+          {
+            "file": "routes/category.$slug.tsx",
+            "path": "category/:slug"
+          },
+          {
+            "file": "routes/login.tsx",
+            "path": "login"
+          },
+          {
+            "file": "routes/register.tsx",
+            "path": "register"
+          },
+          {
+            "file": "routes/logout.tsx",
+            "path": "logout"
+          },
+          {
+            "file": "routes/privacy.tsx",
+            "path": "privacy"
+          },
+          {
+            "file": "routes/terms.tsx",
+            "path": "terms"
+          },
+          {
+            "file": "routes/dmca.tsx",
+            "path": "dmca"
+          },
+          {
+            "file": "routes/contact.tsx",
+            "path": "contact"
+          },
+          {
+            "file": "routes/api.verify-age.ts",
+            "path": "api/verify-age"
+          },
+          {
+            "file": "routes/api.chat.ts",
+            "path": "api/chat"
+          },
+          {
+            "file": "routes/api.cron.ts",
+            "path": "api/cron"
+          },
+          {
+            "file": "routes/api.events.ts",
+            "path": "api/events"
+          },
+          {
+            "file": "routes/api.ip.ts",
+            "path": "api/ip"
+          },
+          {
+            "file": "routes/api.moderate.ts",
+            "path": "api/moderate"
+          },
+          {
+            "file": "routes/api.recommendations.ts",
+            "path": "api/recommendations"
+          },
+          {
+            "file": "routes/api.search-ai.ts",
+            "path": "api/search-ai"
+          },
+          {
+            "file": "routes/api.search-referrer.ts",
+            "path": "api/search-referrer"
+          },
+          {
+            "file": "routes/api.push-subscribe.ts",
+            "path": "api/push-subscribe"
+          },
+          {
+            "file": "routes/api.report.ts",
+            "path": "api/report"
+          },
+          {
+            "file": "routes/api.select-thumbnail.ts",
+            "path": "api/select-thumbnail"
+          },
+          {
+            "file": "routes/api.suggest-summary.ts",
+            "path": "api/suggest-summary"
+          },
+          {
+            "file": "routes/api.suggest-tags.ts",
+            "path": "api/suggest-tags"
+          },
+          {
+            "file": "routes/chat.tsx",
+            "path": "chat"
+          },
+          {
+            "file": "routes/share-target.tsx",
+            "path": "share-target"
+          },
+          {
+            "file": "routes/sitemap.xml.ts",
+            "path": "sitemap.xml"
+          },
+          {
+            "file": "routes/robots.txt.ts",
+            "path": "robots.txt"
+          },
+          {
+            "file": "routes/admin.tsx",
+            "children": [
+              {
+                "file": "routes/admin._index.tsx",
+                "index": true
+              },
+              {
+                "file": "routes/admin.analytics.tsx",
+                "path": "analytics"
+              },
+              {
+                "file": "routes/admin/videos/index.tsx",
+                "path": "videos"
+              },
+              {
+                "file": "routes/admin/videos/new.tsx",
+                "path": "videos/new"
+              },
+              {
+                "file": "routes/admin/videos/$id.edit.tsx",
+                "path": "videos/:id/edit"
+              },
+              {
+                "file": "routes/admin.tags.tsx",
+                "path": "tags"
+              },
+              {
+                "file": "routes/admin.categories.tsx",
+                "path": "categories"
+              },
+              {
+                "file": "routes/admin.comments.tsx",
+                "path": "comments"
+              },
+              {
+                "file": "routes/admin.ads.tsx",
+                "path": "ads"
+              },
+              {
+                "file": "routes/admin.ads.purchases.tsx",
+                "path": "ads/purchases"
+              },
+              {
+                "file": "routes/admin.revenue.tsx",
+                "path": "revenue"
+              },
+              {
+                "file": "routes/admin.moderations.tsx",
+                "path": "moderations"
+              },
+              {
+                "file": "routes/admin.block-status.tsx",
+                "path": "block-status"
+              },
+              {
+                "file": "routes/admin.notifications.tsx",
+                "path": "notifications"
+              }
+            ],
+            "path": "admin"
+          }
+        ]
+      }
+    ]
+  },
+  "viteConfig": {
+    "build": {
+      "assetsDir": "assets"
+    }
+  }
+}

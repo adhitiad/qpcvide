@@ -18,13 +18,18 @@ import "./app.css";
 
 import { prisma } from "~/lib/db.server";
 import { getUser } from "~/lib/auth.server";
-import { getLocale, getDictionary, supportedLocales } from "~/lib/i18n.server";
+import { getLocale, getDictionary } from "~/lib/i18n.server";
+
+const supportedLocales = ["en", "id", "ja"];
 import { I18nProvider } from "~/context/I18nContext";
 
 export const headers: Route.HeadersFunction = () => {
   return {
     "Content-Security-Policy":
       "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://connect.facebook.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; frame-src 'self' https://player4me.com https://filemoon.sx https://dood.la; connect-src 'self' https://*.supabase.co wss://*.supabase.co; font-src 'self'; media-src 'self';",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
   };
 };
 
@@ -51,10 +56,17 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   let user = null;
   if (userId) {
-    user = await prisma.user.findUnique({
+    const fullUser = await prisma.user.findUnique({
       where: { id: userId },
       select: { id: true, username: true, email: true, role: true },
     });
+    if (fullUser) {
+      user = {
+        id: fullUser.id,
+        username: fullUser.username,
+        isAdmin: fullUser.role === 'admin'
+      };
+    }
   }
 
   const locale = await getLocale(request);

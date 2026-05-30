@@ -97,15 +97,20 @@ export async function loader({ request }: Route.LoaderArgs) {
     cacheStrategy: { swr: 60, ttl: 60 } 
   });
 
+  const sanitizeVideo = (v: any) => {
+    const { externalSourceUrl, moderationStatus, moderationScore, ...safeVideo } = v;
+    return safeVideo;
+  };
+
   // If this is a fetcher request for pagination, await the data so fetcher.data is populated directly
   if (page > 1) {
     const [videos, totalVideos] = await Promise.all([fetchVideos(), fetchTotal()]);
     return {
-      videos,
+      videos: videos.map(sanitizeVideo),
       totalVideos,
       tags,
       categories,
-      featured,
+      featured: featured.map(sanitizeVideo),
       page,
       limit,
       url: url.origin,
@@ -113,13 +118,13 @@ export async function loader({ request }: Route.LoaderArgs) {
   }
 
   // For initial load, defer the grid data
-  const gridData = Promise.all([fetchVideos(), fetchTotal()]);
+  const gridData = Promise.all([fetchVideos(), fetchTotal()]).then(([videos, total]) => [videos.map(sanitizeVideo), total]);
 
   return {
     gridData,
     tags,
     categories,
-    featured,
+    featured: featured.map(sanitizeVideo),
     page,
     limit,
     url: url.origin,

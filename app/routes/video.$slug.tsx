@@ -222,9 +222,23 @@ export async function loader({ params, request }: Route.LoaderArgs) {
       }),
   );
 
+  const sanitizeVideo = (v: any) => {
+    const {
+      externalSourceUrl,
+      moderationStatus,
+      moderationScore,
+      ...safeVideo
+    } = v;
+    return safeVideo;
+  };
+
   return {
-    video,
-    relatedVideos,
+    video: {
+      ...sanitizeVideo(video),
+      peerTubeId: video.peerTubeId,
+      externalSourceUrl: undefined,
+    },
+    relatedVideos: relatedVideos.map(sanitizeVideo),
     isLiked,
     isBookmarked,
     isLoggedIn: !!userId,
@@ -289,8 +303,8 @@ export default function AnimeDetail() {
     contentUrl: url,
     duration: formatDuration(video.duration),
     isFamilyFriendly: false,
-    genre: video.categories?.map((c) => c.category.name),
-    keywords: video.tags?.map((t) => t.tag.name).join(", "),
+    genre: video.categories?.map((c: any) => c.category.name),
+    keywords: video.tags?.map((t: any) => t.tag.name).join(", "),
     interactionStatistic: {
       "@type": "InteractionCounter",
       interactionType: { "@type": "WatchAction" },
@@ -309,11 +323,18 @@ export default function AnimeDetail() {
         {/* Anti-Piracy Warning */}
         <div className="bg-red-950/50 border border-red-500/50 text-red-200 px-4 py-2 rounded-lg mb-4 flex items-center justify-center text-sm font-medium">
           <AlertTriangle className="w-5 h-5 mr-2 shrink-0" />
-          <span>Dilarang merekam atau mendistribusikan ulang konten ini. Pelanggaran hak cipta akan ditindak tegas.</span>
+          <span>
+            Dilarang merekam atau mendistribusikan ulang konten ini. Pelanggaran
+            hak cipta akan ditindak tegas.
+          </span>
         </div>
 
         {/* Video Player Section (Top) */}
-        <div id="player-container" className="mb-8 w-full aspect-video bg-black rounded-xl overflow-hidden border border-night-border shadow-2xl relative" onContextMenu={(e) => e.preventDefault()}>
+        <div
+          id="player-container"
+          className="mb-8 w-full aspect-video bg-black rounded-xl overflow-hidden border border-night-border shadow-2xl relative"
+          onContextMenu={(e) => e.preventDefault()}
+        >
           {/* Priority 1: FallbackPlayer with multiple sources */}
           {(video as any).videoSources &&
           Array.isArray((video as any).videoSources) &&
@@ -376,7 +397,7 @@ export default function AnimeDetail() {
           <div className="w-full lg:w-2/3 flex flex-col">
             <div className="flex flex-wrap gap-2 mb-4 justify-between items-start">
               <div className="flex flex-wrap gap-2">
-                {video.categories.map((c) => (
+                {video.categories?.map((c: any) => (
                   <Badge
                     key={c.category.name}
                     className="bg-night-accent text-white border-none font-bold px-3 py-1 text-sm"
@@ -426,8 +447,12 @@ export default function AnimeDetail() {
               <h3 className="text-xl font-bold mb-3">{t("video.synopsis")}</h3>
               {(video as any).summary && (
                 <div className="mb-4 p-4 bg-night-bg rounded-lg border border-night-border">
-                  <h4 className="text-sm font-bold text-night-accent mb-2">AI Summary</h4>
-                  <p className="text-night-text text-sm italic">{(video as any).summary}</p>
+                  <h4 className="text-sm font-bold text-night-accent mb-2">
+                    AI Summary
+                  </h4>
+                  <p className="text-night-text text-sm italic">
+                    {(video as any).summary}
+                  </p>
                 </div>
               )}
               <p className="text-night-muted leading-relaxed whitespace-pre-wrap text-base md:text-lg">
@@ -442,7 +467,7 @@ export default function AnimeDetail() {
             <div className="mt-auto pt-6 border-t border-night-border">
               <h3 className="text-lg font-bold mb-3">{t("video.tags")}</h3>
               <div className="flex flex-wrap gap-2">
-                {video.tags.map((t) => (
+                {video.tags.map((t: any) => (
                   <Badge
                     key={t.tag.name}
                     variant="outline"
