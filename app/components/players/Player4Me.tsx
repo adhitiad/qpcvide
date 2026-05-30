@@ -20,8 +20,6 @@ export function Player4Me({
         src={`https://404.4meplayer.com/#${videoId}`}
         className="absolute inset-0 w-full h-full"
         allowFullScreen
-        sandbox="allow-same-origin allow-scripts allow-popups"
-        referrerPolicy="no-referrer"
         onError={onError}
       />
     </div>
