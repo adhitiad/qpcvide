@@ -136,10 +136,8 @@ export const Layout = ({
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Google Tag Manager */}
-        <meta
-          name="google-adsense-account"
-          content="ca-pub-2350200134639248"
-        ></meta>
+        <meta name="google-adsense-account" content="ca-pub-4036254141069104" />
+
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
