@@ -33,6 +33,7 @@
       "routes/terms": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/dmca": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/contact": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/faq": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/api.verify-age": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/api.chat": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/api.cron": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
@@ -276,6 +277,15 @@
         "parentId": "root",
         "file": "app/routes/contact.tsx",
         "path": "contact",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/faq": {
+        "id": "routes/faq",
+        "parentId": "root",
+        "file": "app/routes/faq.tsx",
+        "path": "faq",
         "config": {
           "runtime": "nodejs"
         }
@@ -734,6 +744,12 @@
         "file": "routes/contact.tsx",
         "path": "contact"
       },
+      "routes/faq": {
+        "id": "routes/faq",
+        "parentId": "root",
+        "file": "routes/faq.tsx",
+        "path": "faq"
+      },
       "routes/api.verify-age": {
         "id": "routes/api.verify-age",
         "parentId": "root",
@@ -1039,6 +1055,10 @@
           {
             "file": "routes/contact.tsx",
             "path": "contact"
+          },
+          {
+            "file": "routes/faq.tsx",
+            "path": "faq"
           },
           {
             "file": "routes/api.verify-age.ts",

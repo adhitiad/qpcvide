@@ -26,7 +26,7 @@ import { I18nProvider } from "~/context/I18nContext";
 export const headers: Route.HeadersFunction = () => {
   return {
     "Content-Security-Policy":
-      "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://connect.facebook.net https://poweredby.jads.co https://*.jads.co; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; frame-src 'self' https://player4me.com https://*.4meplayer.com https://filemoon.sx https://dood.la https://*.jads.co https://*.juicyads.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.jads.co; font-src 'self'; media-src 'self';",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://connect.facebook.net https://poweredby.jads.co https://*.jads.co https://*.juicyads.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; frame-src 'self' https://player4me.com https://*.4meplayer.com https://filemoon.sx https://dood.la https://*.jads.co https://*.juicyads.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.jads.co https://*.juicyads.com; font-src 'self'; media-src 'self';",
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
@@ -301,6 +301,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <AntiAdBlock />
           )}
           <PrivacyConsentBanner />
+          {/* JuicyAds Native Interstitals v1.0 */}
+          {user?.role !== "premium" && user?.role !== "admin" && (
+            <script type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1118954" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
+          )}
         </I18nProvider>
         <ScrollRestoration />
         <script src="/js/fingerprint.js" defer></script>
