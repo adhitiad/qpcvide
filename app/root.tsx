@@ -26,7 +26,7 @@ import { I18nProvider } from "~/context/I18nContext";
 export const headers: Route.HeadersFunction = () => {
   return {
     "Content-Security-Policy":
-      "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://connect.facebook.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; frame-src 'self' https://player4me.com https://*.4meplayer.com https://filemoon.sx https://dood.la; connect-src 'self' https://*.supabase.co wss://*.supabase.co; font-src 'self'; media-src 'self';",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://connect.facebook.net https://poweredby.jads.co https://*.jads.co; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; frame-src 'self' https://player4me.com https://*.4meplayer.com https://filemoon.sx https://dood.la https://*.jads.co https://*.juicyads.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.jads.co; font-src 'self'; media-src 'self';",
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
@@ -135,6 +135,16 @@ export const Layout = ({
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        {/* Google Tag Manager */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-55XKP494');`
+          }}
+        />
         <meta
           name="juicyads-site-verification"
           content="dba245fd31629191fb4bda28c6d0ae17"
@@ -235,9 +245,27 @@ export const Layout = ({
         )}
       </head>
       <body className="font-sans flex flex-col min-h-screen">
+        {/* Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-55XKP494"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          ></iframe>
+        </noscript>
+        {/* End Google Tag Manager (noscript) */}
         <I18nProvider locale={locale} dictionary={dictionary}>
           <Header />
           <main className="flex-1 flex flex-col">
+            {/* JuicyAds v3.0 */}
+            {user?.role !== "premium" && user?.role !== "admin" && (
+              <div className="w-full flex justify-center py-4">
+                <script type="text/javascript" data-cfasync="false" async src="https://poweredby.jads.co/js/jads.js"></script>
+                <ins id="1118947" data-width="728" data-height="102"></ins>
+                <script type="text/javascript" data-cfasync="false" async dangerouslySetInnerHTML={{__html: `(window.adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118947});`}}></script>
+              </div>
+            )}
             <TooltipProvider>{children}</TooltipProvider>
           </main>
           <Footer />
