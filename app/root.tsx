@@ -64,7 +64,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       user = {
         id: fullUser.id,
         username: fullUser.username,
-        isAdmin: fullUser.role === 'admin'
+        isAdmin: fullUser.role === "admin",
       };
     }
   }
@@ -135,20 +135,29 @@ export const Layout = ({
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+          name="juicyads-site-verification"
+          content="dba245fd31629191fb4bda28c6d0ae17"
+        ></meta>
         <Meta />
         <Links />
-        
+
         {/* Hreflang Links */}
-        {origin && supportedLocales.map((l) => (
-          <link
-            key={l}
-            rel="alternate"
-            hrefLang={l}
-            href={`${origin}/${l}${cleanPath === "/" ? "" : cleanPath}`}
-          />
-        ))}
+        {origin &&
+          supportedLocales.map((l) => (
+            <link
+              key={l}
+              rel="alternate"
+              hrefLang={l}
+              href={`${origin}/${l}${cleanPath === "/" ? "" : cleanPath}`}
+            />
+          ))}
         {origin && (
-          <link rel="alternate" hrefLang="x-default" href={`${origin}${cleanPath}`} />
+          <link
+            rel="alternate"
+            hrefLang="x-default"
+            href={`${origin}${cleanPath}`}
+          />
         )}
 
         <link rel="manifest" href="/manifest.json" />
