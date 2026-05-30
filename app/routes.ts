@@ -60,5 +60,6 @@ export default [
     route("moderations", "routes/admin.moderations.tsx"),
     route("block-status", "routes/admin.block-status.tsx"),
     route("notifications", "routes/admin.notifications.tsx"),
+    route("settings", "routes/admin.settings.tsx"),
   ]),
 ] satisfies RouteConfig;

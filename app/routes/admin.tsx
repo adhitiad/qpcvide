@@ -11,7 +11,8 @@ import {
   LogOut,
   DollarSign,
   ShieldAlert,
-  BarChart3
+  BarChart3,
+  Settings
 } from "lucide-react";
 
 export const meta = () => {
@@ -38,6 +39,7 @@ export default function AdminLayout() {
     { name: "Moderations", href: "/admin/moderations", icon: ShieldAlert },
     { name: "Ads", href: "/admin/ads", icon: Megaphone },
     { name: "Revenue", href: "/admin/revenue", icon: DollarSign },
+    { name: "Settings", href: "/admin/settings", icon: Settings },
   ];
 
   return (

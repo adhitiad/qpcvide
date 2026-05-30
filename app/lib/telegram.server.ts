@@ -1,4 +1,6 @@
 import Groq from "groq-sdk";
+import { prisma } from "./db.server";
+import { decryptSetting } from "./encryption.server";
 
 // Telegram Bot Integration for Auiso
 
@@ -16,8 +18,21 @@ export async function sendNewVideoNotification(
   },
   appUrl: string,
 ) {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
+  // Fetch credentials from DB first
+  const dbSettings = await prisma.systemSetting.findMany({
+    where: { key: { in: ["TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID"] } }
+  });
+  
+  let dbToken = "";
+  let dbChatId = "";
+  
+  dbSettings.forEach(s => {
+    if (s.key === "TELEGRAM_BOT_TOKEN") dbToken = decryptSetting(s.value);
+    if (s.key === "TELEGRAM_CHAT_ID") dbChatId = decryptSetting(s.value);
+  });
+
+  const token = dbToken || process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = dbChatId || process.env.TELEGRAM_CHAT_ID;
 
   if (!token || !chatId) {
     console.warn(
