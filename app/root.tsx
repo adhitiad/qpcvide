@@ -26,7 +26,7 @@ import { I18nProvider } from "~/context/I18nContext";
 export const headers: Route.HeadersFunction = () => {
   return {
     "Content-Security-Policy":
-      "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://connect.facebook.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; frame-src 'self' https://player4me.com https://filemoon.sx https://dood.la; connect-src 'self' https://*.supabase.co wss://*.supabase.co; font-src 'self'; media-src 'self';",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://connect.facebook.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; frame-src 'self' https://player4me.com https://*.4meplayer.com https://filemoon.sx https://dood.la; connect-src 'self' https://*.supabase.co wss://*.supabase.co; font-src 'self'; media-src 'self';",
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
