@@ -1,7 +1,9 @@
 import { Link } from "react-router";
+import { useTranslation } from "~/context/I18nContext";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const { t } = useTranslation();
 
   return (
     <footer className="bg-night-card border-t border-night-border mt-auto">
@@ -18,28 +20,34 @@ export function Footer() {
 
           <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-night-muted">
             <Link
+              to="/faq"
+              className="hover:text-night-accent transition-colors"
+            >
+              {t("faq.title") || "Help & FAQ"}
+            </Link>
+            <Link
               to="/privacy"
               className="hover:text-night-accent transition-colors"
             >
-              Privacy Policy
+              {t("legal.privacy") || "Privacy Policy"}
             </Link>
             <Link
               to="/terms"
               className="hover:text-night-accent transition-colors"
             >
-              Terms of Service
+              {t("legal.terms") || "Terms of Service"}
             </Link>
             <Link
               to="/dmca"
               className="hover:text-night-accent transition-colors"
             >
-              DMCA
+              {t("legal.dmca") || "DMCA"}
             </Link>
             <Link
               to="/contact"
               className="hover:text-night-accent transition-colors"
             >
-              Contact Us
+              {t("contact.title") || "Contact Us"}
             </Link>
           </nav>
         </div>

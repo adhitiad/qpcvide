@@ -141,5 +141,15 @@
   "advertise.iHavePaid": "Saya Sudah Bayar",
   "advertise.cancel": "Batal",
   "advertise.day": "hari",
-  "advertise.copy": "Salin"
+  "advertise.copy": "Salin",
+  "faq.title": "Bantuan & FAQ",
+  "faq.subtitle": "Temukan jawaban atas pertanyaan umum dan panduan untuk mengakses platform kami jika diblokir di wilayah Anda.",
+  "faq.q1": "Bagaimana cara mengakses situs jika diblokir?",
+  "faq.a1": "Anda dapat menggunakan VPN (Virtual Private Network) untuk melewati pemblokiran wilayah. Kami menyarankan menggunakan layanan VPN yang memiliki reputasi baik. Secara alternatif, Anda dapat mengubah DNS Anda ke 1.1.1.1 (Cloudflare) atau 8.8.8.8 (Google) atau menggunakan DNS over HTTPS (DoH) yang terpasang di browser Anda.",
+  "faq.q2": "Apa saja domain alternatif?",
+  "faq.a2": "Jika domain utama kami diblokir, Anda dapat mengikuti saluran media sosial resmi kami untuk mendapatkan domain alternatif terbaru dan tautan proksi.",
+  "faq.q3": "Bisakah saya menggunakan Tor untuk mengakses situs?",
+  "faq.a3": "Ya, Anda dapat menggunakan Tor Browser untuk mengakses situs kami secara anonim dan melewati penyensoran.",
+  "faq.q4": "Mengapa video buffering atau tidak memuat?",
+  "faq.a4": "Buffering dapat disebabkan oleh koneksi internet yang lambat. Coba turunkan kualitas video atau jeda video sebentar. Jika menggunakan VPN, coba beralih ke server yang lebih dekat dengan lokasi Anda."
 }

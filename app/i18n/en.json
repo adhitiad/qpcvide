@@ -141,5 +141,15 @@
   "advertise.iHavePaid": "I Have Paid",
   "advertise.cancel": "Cancel",
   "advertise.day": "day",
-  "advertise.copy": "Copy"
+  "advertise.copy": "Copy",
+  "faq.title": "Help & FAQ",
+  "faq.subtitle": "Find answers to common questions and guides to access our platform if it's blocked in your region.",
+  "faq.q1": "How can I access the site if it's blocked?",
+  "faq.a1": "You can use a VPN (Virtual Private Network) to bypass regional blocks. We recommend using reputable VPN services. Alternatively, you can change your DNS to 1.1.1.1 (Cloudflare) or 8.8.8.8 (Google) or use DNS over HTTPS (DoH) built into your browser.",
+  "faq.q2": "What are alternative domains?",
+  "faq.a2": "If our main domain is blocked, you can follow our official social media channels to get the latest alternative domains and proxy links.",
+  "faq.q3": "Can I use Tor to access the site?",
+  "faq.a3": "Yes, you can use the Tor Browser to access our site anonymously and bypass censorship.",
+  "faq.q4": "Why is the video buffering or not loading?",
+  "faq.a4": "Buffering can be caused by a slow internet connection. Try lowering the video quality or pausing the video for a moment. If using a VPN, try switching to a server closer to your location."
 }

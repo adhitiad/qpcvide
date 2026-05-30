@@ -18,8 +18,15 @@ import "./app.css";
 
 import { prisma } from "~/lib/db.server";
 import { getUser } from "~/lib/auth.server";
-import { getLocale, getDictionary } from "~/lib/i18n.server";
+import { getLocale, getDictionary, supportedLocales } from "~/lib/i18n.server";
 import { I18nProvider } from "~/context/I18nContext";
+
+export const headers: Route.HeadersFunction = () => {
+  return {
+    "Content-Security-Policy":
+      "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://connect.facebook.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; frame-src 'self' https://player4me.com https://filemoon.sx https://dood.la; connect-src 'self' https://*.supabase.co wss://*.supabase.co; font-src 'self'; media-src 'self';",
+  };
+};
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -62,6 +69,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     vapidPublicKey: process.env.VAPID_PUBLIC_KEY,
     user,
     origin: new URL(request.url).origin,
+    pathname: new URL(request.url).pathname,
     locale,
     dictionary,
   };
@@ -100,7 +108,15 @@ export const Layout = ({
   const supabaseAnonKey = data?.supabaseAnonKey;
   const vapidPublicKey = data?.vapidPublicKey;
   const origin = data?.origin;
+  const pathname = data?.pathname || "/";
   const user = data?.user;
+
+  // Determine base path without language prefix
+  const pathParts = pathname.split("/").filter(Boolean);
+  if (supportedLocales.includes(pathParts[0] as any)) {
+    pathParts.shift();
+  }
+  const cleanPath = "/" + pathParts.join("/");
 
   return (
     <html lang={locale} className="dark">
@@ -109,6 +125,20 @@ export const Layout = ({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        
+        {/* Hreflang Links */}
+        {origin && supportedLocales.map((l) => (
+          <link
+            key={l}
+            rel="alternate"
+            hrefLang={l}
+            href={`${origin}/${l}${cleanPath === "/" ? "" : cleanPath}`}
+          />
+        ))}
+        {origin && (
+          <link rel="alternate" hrefLang="x-default" href={`${origin}${cleanPath}`} />
+        )}
+
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#0A0A0F" />
 

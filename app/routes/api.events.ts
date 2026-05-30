@@ -1,6 +1,7 @@
 import type { Route } from "./+types/api.events";
 import { z } from "zod";
 import { prisma } from "../lib/db.server";
+import { checkRateLimit } from "../lib/rate-limiter.server";
 
 const eventSchema = z.object({
   fingerprint: z.string().min(1),
@@ -22,6 +23,12 @@ export async function action({ request }: Route.ActionArgs) {
     }
 
     const { fingerprint, videoId, action } = result.data;
+
+    const { allowed } = await checkRateLimit(`events:${fingerprint}`, { maxRequests: 30, windowSeconds: 60 });
+    
+    if (!allowed) {
+      return Response.json({ error: "Terlalu banyak permintaan. Coba lagi nanti." }, { status: 429 });
+    }
 
     // Save to UserEvent
     await prisma.userEvent.create({

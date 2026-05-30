@@ -28,11 +28,7 @@ async function main() {
     
     // Extract real video ID from poster URL
     let realVideoId = "";
-    if (item.poster && item.poster.includes("/poster.png")) {
-      const parts = item.poster.split("/");
-      // The video ID is the segment before "poster.png"
-      realVideoId = parts[parts.length - 2];
-    } else if (item.watch && item.watch.includes("#")) {
+    if (item.watch && item.watch.includes("#")) {
       realVideoId = item.watch.split("#")[1];
     }
 

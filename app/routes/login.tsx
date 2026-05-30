@@ -3,6 +3,7 @@ import { data, redirect } from "react-router";
 import { z } from "zod";
 import { prisma } from "../lib/db.server";
 import { signIn } from "../lib/auth.server";
+import { checkRateLimit } from "../lib/rate-limiter.server";
 import type { Route } from "./+types/login";
 
 import { Button } from "../components/ui/button";
@@ -30,6 +31,13 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export async function action({ request }: Route.ActionArgs) {
+  const ip = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown";
+  const { allowed } = await checkRateLimit(`login:${ip}`, { maxRequests: 5, windowSeconds: 60 });
+  
+  if (!allowed) {
+    return Response.json({ error: "Terlalu banyak permintaan. Coba lagi nanti." }, { status: 429 });
+  }
+
   const formData = await request.formData();
   const payload = Object.fromEntries(formData);
 
