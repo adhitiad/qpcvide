@@ -143,6 +143,11 @@ export const Layout = ({
           crossOrigin="anonymous"
         ></script>
         <script
+          async
+          custom-element="amp-auto-ads"
+          src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js"
+        ></script>
+        <script
           dangerouslySetInnerHTML={{
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -251,6 +256,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         )}
       </head>
       <body className="font-sans flex flex-col min-h-screen">
+        <amp-auto-ads
+          type="adsense"
+          data-ad-client="ca-pub-4036254141069104"
+        ></amp-auto-ads>
         {/* Google Tag Manager (noscript) */}
         <noscript>
           <iframe

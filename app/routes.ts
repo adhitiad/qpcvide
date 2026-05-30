@@ -24,6 +24,7 @@ export default [
   route("terms", "routes/terms.tsx"),
   route("dmca", "routes/dmca.tsx"),
   route("contact", "routes/contact.tsx"),
+  route("faq", "routes/faq.tsx"),
   route("api/verify-age", "routes/api.verify-age.ts"),
   route("api/chat", "routes/api.chat.ts"),
   route("api/cron", "routes/api.cron.ts"),
