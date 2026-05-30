@@ -25,6 +25,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const tag = url.searchParams.get("tag");
   const category = url.searchParams.get("category");
   const sort = url.searchParams.get("sort") || "newest";
+  const isPagination = url.searchParams.get("isPagination") === "true";
 
   const skip = (page - 1) * limit;
 
@@ -55,29 +56,6 @@ export async function loader({ request }: Route.LoaderArgs) {
     orderBy = { releaseDate: "desc" };
   }
 
-  // Fetch data that must block rendering (Hero carousel & filters)
-  const [tags, categories, featured] = await Promise.all([
-    cachedQuery("home:tags", 120, () =>
-      // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
-      prisma.tag.findMany({ orderBy: { name: "asc" }, cacheStrategy: { swr: 60, ttl: 60 } })
-    ),
-    cachedQuery("home:categories", 120, () =>
-      // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
-      prisma.category.findMany({ orderBy: { name: "asc" }, cacheStrategy: { swr: 60, ttl: 60 } })
-    ),
-    cachedQuery("home:featured", 120, () =>
-      prisma.video.findMany({
-        orderBy: { views: "desc" },
-        take: 5,
-        include: {
-          categories: { include: { category: true } },
-        },
-        // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
-        cacheStrategy: { swr: 60, ttl: 60 },
-      })
-    ),
-  ]);
-
   // Defer the heavy list queries
   const fetchVideos = () => prisma.video.findMany({
     where,
@@ -102,7 +80,37 @@ export async function loader({ request }: Route.LoaderArgs) {
     return safeVideo;
   };
 
-  // If this is a fetcher request for pagination, await the data so fetcher.data is populated directly
+  // 🚀 FAST PATH FOR INFINITE SCROLL 🚀
+  // Only fetch the next page of videos. Bypasses all caching, tag fetching, and total counts.
+  if (isPagination) {
+    const videos = await fetchVideos();
+    return { videos: videos.map(sanitizeVideo) };
+  }
+
+  // Fetch data that must block rendering (Hero carousel & filters)
+  const [tags, categories, featured] = await Promise.all([
+    cachedQuery("home:tags", 120, () =>
+      // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
+      prisma.tag.findMany({ orderBy: { name: "asc" }, cacheStrategy: { swr: 60, ttl: 60 } })
+    ),
+    cachedQuery("home:categories", 120, () =>
+      // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
+      prisma.category.findMany({ orderBy: { name: "asc" }, cacheStrategy: { swr: 60, ttl: 60 } })
+    ),
+    cachedQuery("home:featured", 120, () =>
+      prisma.video.findMany({
+        orderBy: { views: "desc" },
+        take: 5,
+        include: {
+          categories: { include: { category: true } },
+        },
+        // @ts-expect-error - cacheStrategy is added by Prisma Accelerate
+        cacheStrategy: { swr: 60, ttl: 60 },
+      })
+    ),
+  ]);
+
+  // If this is a direct load of a specific page, fetch the grid data fully
   if (page > 1) {
     const [videos, totalVideos] = await Promise.all([fetchVideos(), fetchTotal()]);
     return {
@@ -117,7 +125,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     };
   }
 
-  // For initial load, defer the grid data
+  // For initial load, defer the grid data to make first paint instant
   const gridData = Promise.all([fetchVideos(), fetchTotal()]).then(([videos, total]) => [videos.map(sanitizeVideo), total]);
 
   return {
@@ -137,7 +145,12 @@ import { useTranslation } from "~/context/I18nContext";
 
 export default function Home() {
   const loaderData = useLoaderData<typeof loader>();
-  const { tags, categories, featured, page, limit, url } = loaderData;
+  const tags = ("tags" in loaderData ? loaderData.tags : []) as any[];
+  const categories = ("categories" in loaderData ? loaderData.categories : []) as any[];
+  const featured = ("featured" in loaderData ? loaderData.featured : []) as any[];
+  const page = ("page" in loaderData ? loaderData.page : 1) as number;
+  const limit = ("limit" in loaderData ? loaderData.limit : 12) as number;
+  const url = ("url" in loaderData ? loaderData.url : "") as string;
   const [searchParams] = useSearchParams();
 
   // Handle both deferred load (gridData) and paginated fetch (videos/totalVideos)

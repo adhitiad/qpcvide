@@ -36,6 +36,7 @@ export function useInfiniteScroll<T>({
       const nextPage = page + 1;
       const params = new URLSearchParams(searchParams);
       params.set("page", nextPage.toString());
+      params.set("isPagination", "true"); // Tell the server to only send back videos
       setLastFetchedPage(nextPage); // mark as fetched immediately to avoid double fetching
       fetcher.load(`?${params.toString()}`);
     }
