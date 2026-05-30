@@ -137,7 +137,11 @@ export const Layout = ({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Google Tag Manager */}
         <meta name="google-adsense-account" content="ca-pub-4036254141069104" />
-
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4036254141069104"
+          crossOrigin="anonymous"
+        ></script>
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
