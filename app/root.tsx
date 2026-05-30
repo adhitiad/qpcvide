@@ -136,13 +136,17 @@ export const Layout = ({
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Google Tag Manager */}
+        <meta
+          name="google-adsense-account"
+          content="ca-pub-2350200134639248"
+        ></meta>
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-55XKP494');`
+})(window,document,'script','dataLayer','GTM-55XKP494');`,
           }}
         />
         <meta
@@ -261,9 +265,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             {/* JuicyAds v3.0 */}
             {user?.role !== "premium" && user?.role !== "admin" && (
               <div className="w-full flex justify-center py-4">
-                <script type="text/javascript" data-cfasync="false" async src="https://poweredby.jads.co/js/jads.js"></script>
+                <script
+                  type="text/javascript"
+                  data-cfasync="false"
+                  async
+                  src="https://poweredby.jads.co/js/jads.js"
+                ></script>
                 <ins id="1118947" data-width="728" data-height="102"></ins>
-                <script type="text/javascript" data-cfasync="false" async dangerouslySetInnerHTML={{__html: `(window.adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118947});`}}></script>
+                <script
+                  type="text/javascript"
+                  data-cfasync="false"
+                  async
+                  dangerouslySetInnerHTML={{
+                    __html: `(window.adsbyjuicy = window.adsbyjuicy || []).push({'adzone':1118947});`,
+                  }}
+                ></script>
               </div>
             )}
             <TooltipProvider>{children}</TooltipProvider>
