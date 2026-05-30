@@ -1,6 +1,8 @@
 import type { Route } from "./+types/api.cron";
 import { checkBlockStatus } from "../lib/block-checker.server";
 import { trainModel } from "../lib/recommender.server";
+import { prisma } from "../lib/db.server";
+import { sendNewVideoNotification } from "../lib/telegram.server";
 
 export async function loader({ request }: Route.LoaderArgs) {
   return handleCronRequest(request);
@@ -30,6 +32,27 @@ async function handleCronRequest(request: Request) {
     await trainModel();
   } catch (error) {
     console.error("Cron failed to train model", error);
+  }
+
+  // Telegram Queue Processing
+  try {
+    const unnotifiedVideo = await prisma.video.findFirst({
+      where: { isTelegramNotified: false },
+      orderBy: { createdAt: "asc" }
+    });
+
+    if (unnotifiedVideo) {
+      const origin = new URL(request.url).origin;
+      await sendNewVideoNotification(unnotifiedVideo, origin);
+      
+      await prisma.video.update({
+        where: { id: unnotifiedVideo.id },
+        data: { isTelegramNotified: true }
+      });
+      console.log(`Telegram notified for video: ${unnotifiedVideo.slug}`);
+    }
+  } catch (error) {
+    console.error("Cron failed to process Telegram queue", error);
   }
 
   return new Response(JSON.stringify(result), {

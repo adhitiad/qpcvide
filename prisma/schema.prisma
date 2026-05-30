@@ -53,6 +53,7 @@ model Video {
   views             Int      @default(0)
   moderationStatus  String   @default("SAFE") // "SAFE", "PENDING_REVIEW", "REJECTED"
   moderationScore   Float?
+  isTelegramNotified Boolean @default(false)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 

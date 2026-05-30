@@ -137,6 +137,7 @@ export const Layout = ({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Google Tag Manager */}
         <meta name="google-adsense-account" content="ca-pub-4036254141069104" />
+        <meta name="7searchppc" content="fd516ce9ad69024bde89f52c5a3e4b56" />
         <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4036254141069104"
@@ -255,7 +256,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           />
         )}
       </head>
-      <body className="font-sans flex flex-col min-h-screen" suppressHydrationWarning>
+      <body
+        className="font-sans flex flex-col min-h-screen"
+        suppressHydrationWarning
+      >
         <amp-auto-ads
           type="adsense"
           data-ad-client="ca-pub-4036254141069104"
@@ -303,7 +307,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <PrivacyConsentBanner />
           {/* JuicyAds Native Interstitals v1.0 */}
           {user?.role !== "premium" && user?.role !== "admin" && (
-            <script type="text/javascript" data-id="juicyads-native-ads" data-ad-zone="1118954" data-targets="a" src="https://js.juicyads.com/juicyads.native-ads.min.js"></script>
+            <script
+              type="text/javascript"
+              data-id="juicyads-native-ads"
+              data-ad-zone="1118954"
+              data-targets="a"
+              src="https://js.juicyads.com/juicyads.native-ads.min.js"
+            ></script>
           )}
         </I18nProvider>
         <ScrollRestoration />

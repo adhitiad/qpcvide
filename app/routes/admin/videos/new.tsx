@@ -102,6 +102,8 @@ export async function action({ request }: Route.ActionArgs) {
       },
     });
 
+    // Telegram notification is now handled by a queue system via api.cron.ts
+    
     return new Response(null, {
       status: 302,
       headers: { Location: "/admin/videos" },
