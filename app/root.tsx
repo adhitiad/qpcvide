@@ -29,7 +29,6 @@ export const headers: Route.HeadersFunction = () => {
       "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://connect.facebook.net https://poweredby.jads.co https://*.jads.co https://*.juicyads.com https://cdn.ampproject.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; frame-src 'self' https://player4me.com https://*.4meplayer.com https://filemoon.sx https://dood.la https://*.jads.co https://*.juicyads.com https://*.doubleclick.net https://*.google.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.jads.co https://*.juicyads.com https://*.google.com https://*.doubleclick.net; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com; media-src 'self';",
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "strict-origin-when-cross-origin",
-    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
   };
 };
 
